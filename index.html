@@ -6,306 +6,500 @@
 <title>Work Order Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <style>
 :root{
-  --bg:#eef1f4; --panel:#ffffff; --ink:#111a22; --muted:#5c6b7a; --faint:#8496a6;
-  --line:#dfe4ea; --line2:#eaeef2; --header:#122b36; --header2:#1b3d4a;
-  --pastdue:#d92d20; --duesoon:#e8820c; --rush:#e0347a; --followup:#c99700;
+  --bg:#f3f0f4; --panel:#ffffff; --ink:#3d2430; --muted:#946b7a; --faint:#c19aab;
+  --line:#f6d9e6; --line2:#fcecf3; --tap:#e0348a; --tap2:#c21f70;
+  /* status + flag colors — unchanged on purpose */
+  --pastdue:#d92d20; --duesoon:#e8820c; --rush:#7c3aed; --followup:#c99700;
   --motion:#0f9d6b; --done:#7c8a99; --ok:#9aa9b6;
-  --tap:#0f9d6b;
+  --over:#d92d20; --near:#e8820c; --under:#0f9d6b;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;-webkit-text-size-adjust:100%}
-body{padding-bottom:88px}
+body{padding-bottom:92px}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.qs{font-family:'Quicksand',system-ui,sans-serif}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select,textarea{font-family:inherit;font-size:16px}
-
+a{color:inherit}
+ 
 /* header */
-.top{position:sticky;top:0;z-index:30;background:var(--header);color:#eaf2f5;
-  padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
-.top h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.2px;display:flex;align-items:center;gap:9px}
-.top h1 .dot{width:8px;height:8px;border-radius:50%;background:var(--motion);box-shadow:0 0 0 3px rgba(15,157,107,.25)}
-.mode{margin-left:auto;font-size:11px;font-weight:500;color:#9fc4cf;display:flex;align-items:center;gap:5px}
-.mode b{color:#eaf2f5;font-weight:600}
+.top{position:sticky;top:0;z-index:30;color:#fff;
+  background:linear-gradient(135deg,#c21f70 0%,#ec4f9d 60%,#f47cb8 100%);
+  padding:calc(env(safe-area-inset-top) + 13px) 16px 13px;box-shadow:0 3px 16px rgba(194,31,112,.28)}
+.top h1{margin:0;font-size:19px;font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:8px;font-family:'Quicksand'}
+.top h1 .bloom{font-size:17px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.mode{margin-left:auto;font-size:11px;font-weight:600;color:#ffe3f1;display:flex;align-items:center;gap:5px;font-family:'IBM Plex Sans'}
+.mode b{color:#fff}
+.back{display:inline-flex;align-items:center;gap:7px;font-family:'Quicksand';font-weight:600;font-size:16px;color:#fff}
+.back svg{width:20px;height:20px}
+ 
+/* tabs */
+.tabs{display:flex;gap:4px;margin-top:13px;background:rgba(255,255,255,.16);padding:4px;border-radius:12px}
+.tab{flex:1;text-align:center;padding:8px 4px;border-radius:9px;font-family:'Quicksand';font-weight:700;font-size:13.5px;color:#ffe3f1}
+.tab.on{background:#fff;color:var(--tap2);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+ 
 /* triage */
-.triage{display:flex;gap:8px;margin-top:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-.tcard{flex:0 0 auto;min-width:78px;border-radius:11px;padding:9px 12px;text-align:left;color:#fff;
-  transition:transform .08s ease, filter .12s ease}
+.triage{display:flex;gap:8px;margin-top:13px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.tcard{flex:0 0 auto;min-width:78px;border-radius:13px;padding:9px 12px;text-align:left;color:#fff;transition:transform .08s,filter .12s}
 .tcard:active{transform:scale(.96)}
-.tcard.off{filter:grayscale(.55) brightness(.82);opacity:.7}
+.tcard.off{filter:grayscale(.5) brightness(.85);opacity:.72}
 .tcard .n{font-size:22px;font-weight:700;line-height:1;font-family:'IBM Plex Mono'}
-.tcard .l{font-size:10.5px;font-weight:600;margin-top:4px;opacity:.95;letter-spacing:.2px}
-.tcard.clear{background:rgba(255,255,255,.14);color:#eaf2f5}
-
+.tcard .l{font-size:10.5px;font-weight:600;margin-top:4px;opacity:.95}
+.tcard.clear{background:rgba(255,255,255,.2);color:#fff}
+ 
+/* rush box */
+.rushbox{max-width:860px;margin:12px auto 0;padding:0 16px}
+.rushbox .inner{background:#fff;border:1.5px solid #e2d8f7;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(224,52,138,.08)}
+.rushbox h3{margin:0;font-family:'Quicksand';font-weight:700;font-size:13px;color:var(--rush);
+  padding:11px 14px;display:flex;align-items:center;gap:8px;background:#f4f0fc}
+.rushbox h3 .cnt{margin-left:auto;background:var(--rush);color:#fff;font-family:'IBM Plex Mono';font-size:12px;padding:2px 8px;border-radius:20px}
+.rushline{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line2)}
+.rushline:active{background:var(--line2)}
+.rushline .wo{font-family:'IBM Plex Mono';font-weight:600;font-size:13.5px}
+.rushline .lc{font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rushline .fl{font-size:10px;font-weight:700;color:#fff;padding:2px 7px;border-radius:5px}
+ 
 /* controls */
-.controls{padding:11px 16px 4px;display:flex;flex-direction:column;gap:9px;position:sticky;top:0;}
-.searchrow{display:flex;gap:8px}
-.search{flex:1;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);
-  border-radius:10px;padding:0 11px;height:42px}
+.controls{padding:12px 16px 4px;display:flex;flex-direction:column;gap:9px;max-width:860px;margin:0 auto}
+.search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px}
 .search input{border:none;outline:none;flex:1;background:none;color:var(--ink)}
-.search svg{flex:0 0 auto;color:var(--faint)}
+.search svg{color:var(--faint)}
 .filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
 .sel{position:relative;flex:0 0 auto}
-.sel select{appearance:none;background:var(--panel);border:1px solid var(--line);border-radius:9px;
-  height:38px;padding:0 30px 0 12px;font-size:13.5px;font-weight:500;color:var(--ink);outline:none}
-.sel::after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border-right:2px solid var(--faint);
-  border-bottom:2px solid var(--faint);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-
-/* list */
-.list{padding:8px 16px 20px;display:flex;flex-direction:column;gap:11px;max-width:860px;margin:0 auto}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;
-  display:flex;box-shadow:0 1px 2px rgba(17,26,34,.04)}
+.sel select{appearance:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;height:38px;padding:0 30px 0 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none}
+.sel::after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+ 
+/* list + cards */
+.list{padding:10px 16px 20px;display:flex;flex-direction:column;gap:11px;max-width:860px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;display:flex;box-shadow:0 2px 8px rgba(194,31,112,.06)}
+.card:active{transform:translateY(1px)}
 .rail{flex:0 0 6px;align-self:stretch}
-.body{flex:1;min-width:0;padding:12px 13px 11px}
+.cbody{flex:1;min-width:0;padding:12px 13px 11px}
 .r1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .chip{font-size:10.5px;font-weight:700;letter-spacing:.3px;color:#fff;padding:3px 8px;border-radius:6px;white-space:nowrap}
-.chip.dark{color:#3a2c00}
 .pill{font-size:11px;font-weight:600;color:var(--muted);background:var(--line2);padding:3px 8px;border-radius:6px}
-.wo{font-size:15px;font-weight:600;letter-spacing:.2px}
+.wo{font-size:15px;font-weight:600}
 .spacer{flex:1}
 .r2{margin-top:7px;font-size:13.5px;color:var(--muted);line-height:1.4}
 .r2 .loc{color:var(--ink);font-weight:500}
-.scope{margin-top:5px;font-size:13.5px;color:var(--ink);line-height:1.42;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scope{margin-top:5px;font-size:13.5px;color:var(--ink);line-height:1.42;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .meta{margin-top:9px;display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
 .meta b{color:var(--muted);font-weight:600}
 .meta .due.late{color:var(--pastdue);font-weight:600}
-.next{margin-top:9px;font-size:13px;color:var(--ink);background:#f5f8fa;border-left:3px solid var(--line);
-  padding:7px 9px;border-radius:0 7px 7px 0;line-height:1.4}
+.budgetbadge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;color:#fff}
+.next{margin-top:9px;font-size:13px;color:var(--ink);background:#fdf2f7;border-left:3px solid var(--line);padding:7px 9px;border-radius:0 8px 8px 0;line-height:1.4}
 .acts{margin-top:11px;display:flex;gap:7px;flex-wrap:wrap}
-.act{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:8px;
-  font-size:12.5px;font-weight:600;border:1px solid var(--line);color:var(--muted);background:#fff}
+.act{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:9px;font-size:12.5px;font-weight:600;border:1px solid var(--line);color:var(--muted);background:#fff}
 .act:active{background:var(--line2)}
 .act.call{border-color:#bfe6d5;color:#0b7a53;background:#eefaf4}
-.act.log{border-color:#cfe0ec;color:#1668a8;background:#eef6fc}
+.act.log{border-color:#f4cbe0;color:var(--tap2);background:#fdeef6}
 .act svg{width:15px;height:15px}
-.expand{padding:0 13px 13px;border-top:1px solid var(--line2);margin-top:2px}
-.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:12.5px;margin-top:11px}
-.dl dt{color:var(--faint);font-weight:600}
-.dl dd{margin:0;color:var(--ink)}
-.hist{margin-top:11px;font-size:12.5px;color:var(--muted);line-height:1.5;white-space:pre-wrap}
-.hist .lab{color:var(--faint);font-weight:600;display:block;margin-bottom:3px}
-.rowbtns{margin-top:12px;display:flex;gap:8px}
-.link{font-size:12.5px;font-weight:600;color:var(--muted)}
-.link.del{color:var(--pastdue)}
-.caret{margin-left:6px;color:var(--faint);font-size:12px}
-
-.empty{max-width:860px;margin:40px auto;text-align:center;color:var(--muted);padding:0 24px}
-.empty h3{color:var(--ink);font-size:16px;margin:0 0 6px}
-
-/* fab */
-.fab{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom) + 18px);z-index:40;
-  height:54px;padding:0 20px 0 16px;border-radius:16px;background:var(--tap);color:#fff;font-weight:600;
-  font-size:15px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(15,157,107,.4)}
+.tapopen{cursor:pointer}
+ 
+/* detail */
+.detail{max-width:760px;margin:0 auto;padding:14px 16px 30px}
+.dhead{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(194,31,112,.06)}
+.dhead .top1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dhead h2{margin:6px 0 0;font-size:20px;font-family:'Quicksand';font-weight:700}
+.dhead .loc{margin-top:3px;color:var(--muted);font-size:14px}
+.dscope{margin-top:11px;font-size:15px;line-height:1.5}
+.sec{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;margin-top:13px;box-shadow:0 2px 8px rgba(194,31,112,.05)}
+.sec h4{margin:0 0 11px;font-family:'Quicksand';font-weight:700;font-size:14px;color:var(--tap2);display:flex;align-items:center;gap:8px}
+.sec h4 .r{margin-left:auto;font-family:'IBM Plex Sans';font-weight:600;font-size:12px;color:var(--faint)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;font-size:14px}
+.kv dt{color:var(--faint);font-weight:600}
+.kv dd{margin:0}
+.sublink{color:var(--tap);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+ 
+/* budget bar */
+.bbar{height:12px;border-radius:8px;background:var(--line2);overflow:hidden;margin:4px 0 8px}
+.bbar span{display:block;height:100%;border-radius:8px}
+.bnums{display:flex;justify-content:space-between;font-size:13px}
+.bnums b{font-family:'IBM Plex Mono';font-weight:600}
+.bwarn{margin-top:8px;font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px}
+ 
+/* log */
+.logadd{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.logadd textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:56px;resize:vertical;outline:none;line-height:1.4}
+.logadd textarea:focus{border-color:var(--tap);box-shadow:0 0 0 3px rgba(224,52,138,.12)}
+.logadd button{align-self:flex-end;background:var(--tap);color:#fff;font-weight:700;font-size:13px;padding:8px 16px;border-radius:9px}
+.logentry{border-left:3px solid var(--line);padding:2px 0 12px 12px;position:relative}
+.logentry:last-child{padding-bottom:2px}
+.logentry .ts{font-family:'IBM Plex Mono';font-size:11px;color:var(--tap);font-weight:600}
+.logentry .tx{font-size:13.5px;margin-top:3px;line-height:1.45;white-space:pre-wrap}
+.logentry.legacy .ts{color:var(--faint)}
+.hist{font-size:13px;color:var(--muted);line-height:1.55;white-space:pre-wrap}
+ 
+/* subs */
+.subrow{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:0 2px 8px rgba(194,31,112,.05)}
+.subrow:active{background:var(--line2)}
+.subrow .nm{font-family:'Quicksand';font-weight:700;font-size:16px;color:var(--tap2)}
+.subrow .tr{font-size:12.5px;color:var(--muted);margin-top:2px}
+.subrow .ct{font-size:12.5px;color:var(--faint);margin-top:6px}
+.jobmini{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line2);font-size:13px}
+.jobmini:active{opacity:.6}
+.jobmini .fl{font-size:9.5px;font-weight:700;color:#fff;padding:2px 6px;border-radius:5px}
+.jobmini .wo{font-family:'IBM Plex Mono';font-weight:600}
+.jobmini .loc{color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ 
+.rowbtns{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:10px 16px;border-radius:11px;font-weight:700;font-size:13.5px}
+.btn.pri{background:var(--tap);color:#fff}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--muted)}
+.btn.done{background:#e7f7f0;border:1px solid #bfe6d5;color:#0b7a53}
+.btn.del{background:#fff;border:1px solid #f3c9c6;color:var(--pastdue)}
+ 
+.empty{max-width:760px;margin:44px auto;text-align:center;color:var(--muted);padding:0 24px}
+.empty h3{color:var(--ink);font-size:16px;margin:0 0 6px;font-family:'Quicksand'}
+ 
+.fab{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom) + 18px);z-index:40;height:56px;padding:0 22px 0 18px;border-radius:18px;background:var(--tap);color:#fff;font-weight:700;font-size:15px;font-family:'Quicksand';display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(224,52,138,.42)}
 .fab:active{transform:translateY(1px)}
-.foot{max-width:860px;margin:0 auto 30px;padding:0 16px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.foot{max-width:760px;margin:6px auto 30px;padding:0 16px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 .foot button{font-size:12px;font-weight:600;color:var(--faint)}
-
+ 
 /* modal */
-.scrim{position:fixed;inset:0;background:rgba(10,20,28,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.scrim{position:fixed;inset:0;background:rgba(61,36,48,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:640px){.scrim{align-items:center}}
-.sheet{background:var(--bg);width:100%;max-width:640px;max-height:94vh;overflow:auto;border-radius:18px 18px 0 0}
-@media(min-width:640px){.sheet{border-radius:16px}}
-.sheet header{position:sticky;top:0;background:var(--header);color:#eaf2f5;padding:15px 18px;
-  display:flex;align-items:center;gap:12px;z-index:2}
-.sheet header h2{margin:0;font-size:16px;font-weight:600;flex:1}
-.sheet header .x{font-size:22px;color:#9fc4cf;line-height:1}
-.form{padding:16px 18px 22px}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:94vh;overflow:auto;border-radius:20px 20px 0 0}
+@media(min-width:640px){.sheet{border-radius:18px}}
+.sheet header{position:sticky;top:0;color:#fff;background:linear-gradient(135deg,#c21f70,#ec4f9d);padding:15px 18px;display:flex;align-items:center;gap:12px;z-index:2}
+.sheet header h2{margin:0;font-size:16px;font-weight:700;flex:1;font-family:'Quicksand'}
+.sheet header .x{font-size:22px;color:#ffdcee;line-height:1}
+.form{padding:16px 18px 24px}
 .fg{margin-bottom:13px}
 .fg label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--panel);border:1px solid var(--line);
-  border-radius:9px;padding:10px 11px;color:var(--ink);outline:none}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--header2);box-shadow:0 0 0 3px rgba(27,61,74,.12)}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 11px;color:var(--ink);outline:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--tap);box-shadow:0 0 0 3px rgba(224,52,138,.12)}
 .fg textarea{min-height:70px;resize:vertical;line-height:1.45}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
-.rushtog{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
-  border-radius:9px;padding:10px 11px}
+.rushtog{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 11px}
 .rushtog input{width:20px;height:20px;accent-color:var(--rush)}
 .rushtog span{font-size:13.5px;font-weight:600}
-.save{width:100%;height:50px;border-radius:12px;background:var(--tap);color:#fff;font-size:15px;font-weight:600;margin-top:6px}
+.save{width:100%;height:50px;border-radius:13px;background:var(--tap);color:#fff;font-size:15px;font-weight:700;font-family:'Quicksand';margin-top:6px}
 .save:active{transform:translateY(1px)}
 .hint{font-size:12px;color:var(--faint);line-height:1.5;margin:2px 0 14px}
-.syncbox{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px;margin:2px 0 12px;font-size:13px;line-height:1.5;color:var(--muted)}
-.syncbox code{font-family:'IBM Plex Mono';background:var(--line2);padding:1px 5px;border-radius:4px;font-size:12px;color:var(--ink)}
+.syncbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin:2px 0 12px;font-size:13px;line-height:1.5;color:var(--muted)}
+.syncbox code{font-family:'IBM Plex Mono';background:var(--line2);padding:1px 5px;border-radius:4px;font-size:11.5px;color:var(--ink);display:inline-block}
 .syncbox b{color:var(--ink)}
+.picker{display:flex;gap:8px}
+.picker select{flex:1}
+.picker button{flex:0 0 auto;background:var(--tap);color:#fff;border-radius:10px;padding:0 14px;font-weight:700;font-size:13px}
+.noteedit{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px;min-height:90px;resize:vertical;outline:none;line-height:1.5;font-size:13.5px;color:var(--ink);font-family:'IBM Plex Sans'}
+.noteedit:focus{border-color:var(--tap);box-shadow:0 0 0 3px rgba(224,52,138,.12)}
+.contactcard{padding:9px 0;border-top:1px solid var(--line2)}
+.contactcard:first-of-type{border-top:none;padding-top:0}
+.contactcard .cn{font-weight:600;font-size:14px}
+.contactcard .cd{font-size:13px;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-/* ---- Supabase sync (optional) ----
-   Leave these blank to run in local mode (data saved on this device).
-   To sync across your phone + computer, see the README, then paste your
-   project URL and anon key here and redeploy. That's the only change. */
+/* ---- Supabase sync (optional). Blank = local mode. See README. ---- */
 window.SUPABASE_URL = "";
 window.SUPABASE_ANON_KEY = "";
 </script>
 <script type="text/babel" data-presets="react">
-const {useState,useEffect,useMemo,useRef} = React;
-
-/* ---------------- seed data ---------------- */
-const SEED = [
- {wo:"200-2529",job:"52572",region:"IL",client:"",location:"9700 S 13th St, Oak Creek, WI (MKE2)",scope:"Flush valves and faucets",sub:"Burim",fm:"",contact:"Debbie",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-06-04",lastContact:"2026-08-13",next:"Follow up with Debbie on the award — survey invoice sent 6/26, still no award.",history:"Quoted 6/5 (faucet price estimated). Burim survey invoice emailed to Debbie 6/26. Waiting on award 8/13."},
- {wo:"0231-888",job:"52839",region:"FL-West",client:"CBRE - AT&T",location:"1332 N John Young Pkwy, Kissimmee, FL 34741",scope:"Laminate repair FOH & BOH — check ALL laminate on site, add any extra areas to the quote",sub:"Wood Craft (Sonia) / Diamond Painting",fm:"Maria McArdle",contact:"Jay Rios",phone:"407-456-0758",nte:"$350",pri:"P4",rush:false,status:"Awaiting Sub Quote",due:"2026-07-02",lastContact:"2026-09-01",next:"Get BOH quote from Diamond Painting; reconcile with Wood Craft/Max Ewy quote, then submit.",history:"Arrive-by 6/27 1PM. Wood Craft (Sonia)-Max Ewy quote received 7/22. Diamond FOH received, need answers + BOH quote (8/10). Moises resurveyed 8/13. Cheyli working 9/1."},
- {wo:"0205-1000",job:"51960",region:"FL-West",client:"CBRE - AT&T",location:"2351 E Fowler Ave, Tampa, FL 33609",scope:"Touch up/refinish laminate (FOH) — 2 community tables on salesfloor lifting. Pics requested",sub:"Diamond Painting / McCann / handymen",fm:"Maria McArdle",contact:"Melissa Macaluso",phone:"727-255-4936",nte:"$350",pri:"P5",rush:false,status:"Approved",due:"2026-06-06",lastContact:"2026-09-01",next:"Lock in a handyman: waiting on McCann price cut; compare High Quality Handyman + Tampa Handy Pro, then schedule.",history:"Arrive-by 5/29 5:30PM. APPROVED 6/3. Material left for Mike & Yianni. Dispatched Diamond Painting 7/30. Asked McCann to reduce price 9/1. Emailed High Quality Handyman & Tampa Handy Pro 9/1. Cheyli working 9/1."},
- {wo:"2011-1147.04",job:"50363",region:"FL-East",client:"",location:"7703 W Flagler St, Miami",scope:"(scope not captured yet)",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"New",due:"",lastContact:"",next:"Pull this WO in MHelpDesk — no scope, sub, or status captured. Find out where it stands.",history:"Listed with no detail in Sarah's notes. Needs full lookup."},
- {wo:"2011-1147.06",job:"52362",region:"FL-East",client:"",location:"Miami area",scope:"Replace HVAC unit PAC-03 + install new duct detector",sub:"Dyna Fire (Isaac & Bruce)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"",lastContact:"2026-09-01",next:"Get update on the 8/11 inspection (4th) and confirm the duct detector is on the return, not the supply.",history:"APPROVED 1/27. Smoke issue - detector needed on return not supply (3/20). Twin Island Refrigeration, then Brophy Air (Gabriel Rodriguez), then Dyna Fire. APPROVED again 6/1. Scheduled 8/11 for a 4th inspection - need update (8/20; 9/1)."},
- {wo:"200-2450",job:"51842",region:"FL/Amazon",client:"Amazon",location:"2600 N Normandy Blvd, Deltona (MCO2)",scope:"Desk remodel",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"Quote Submitted",due:"2026-04-24",lastContact:"2026-06-23",next:"Badly overdue and silent since June. Chase the award in FairMarkit / escalate.",history:"Quoted 5/15 (material was a rough guess). Checked FairMarkit 6/4. Waiting for award 6/23."},
- {wo:"200-2547",job:"52658",region:"FL/Amazon",client:"Amazon",location:"2501 Normandy Blvd, Deltona (QZZ1)",scope:"Desk work + electrical + security system",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"In Progress",due:"2026-06-11",lastContact:"2026-08-20",next:"Confirm remaining work is done. Dust containment (opaque tarps, 4 sides + roof), electric saw only, electrical afterhours, to code.",history:"Quoted 6/12 FairMarkit - Diamond fabricating desk. APPROVED 7/16. Scheduled 8/3-8/6, still more work 8/20."},
- {wo:"113436-02",job:"53453",region:"NY-North",client:"Amazon",location:"4201 Walden Ave, Lancaster (BUF5)",scope:"Quote for painting",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"2026-08-14",lastContact:"2026-09-02",next:"Confirm the 9/2 painting happened and close it out.",history:"Scheduled 9/2."},
- {wo:"114028-02 RFE",job:"53240",region:"NY-North",client:"Amazon",location:"BUF9",scope:"Hang TVs + relocate projector screen",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"",lastContact:"2026-07-28",next:"Follow up on the award — silent since late July.",history:"Quoted 7/28 - noted use of lift and travel hours."},
- {wo:"1852-517.02",job:"53781",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace ceiling tiles",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-10",lastContact:"",next:"Get it scheduled before the 9/10 due date.",history:"Scheduled: ???"},
- {wo:"1852-515",job:"53706",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace carpet tiles",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-09",lastContact:"",next:"Schedule for ~9/7 alongside the WV carpet job, once Shaw carpet arrives.",history:"Scheduled: ??? (aim 9/7 with the WV job once Shaw carpet comes in)."},
- {wo:"200-2650",job:"53666",region:"PA-West",client:"Amazon",location:"165 Gleen Gox Rd, New Stanton, PA",scope:"Install 221 wheel stops + paint them",sub:"Curbo",fm:"",contact:"Luke",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-08-26",lastContact:"2026-08-26",next:"Follow up on the Curbo quote award (they estimate 4-5 days).",history:"Curbo estimate 4-5 days, verbal over phone w/ Luke. Quoted 8/26."},
- {wo:"2426-260",job:"53520 / 53715",region:"WV",client:"CBRE - AT&T",location:"9909 Mall Road, Morgantown, WV",scope:"Replace carpet tiles",sub:"Shaw (material)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Parts Ordered",due:"2026-08-25",lastContact:"2026-08-31",next:"Track the Shaw carpet (FedEx 876575752601), then schedule install ~9/7 with the PA carpet job.",history:"APPROVED 8/31. Placed carpet order with Shaw 8/31. FedEx tracking # 876575752601."}
+const {useState,useEffect,useRef} = React;
+ 
+/* ---------------- subs seed ---------------- */
+const SUB_SEED=[
+ {id:"s_diamond",name:"Diamond Painting",trade:"Painting / laminate / millwork",contacts:[{name:"Moises",phone:"",email:""}],address:"",notes:"Primary FL vendor. Fabricates desks. Handles FOH/BOH laminate."},
+ {id:"s_burim",name:"Burim",trade:"Plumbing",contacts:[{name:"",phone:"",email:""}],address:"",notes:"Flush valves & faucets."},
+ {id:"s_woodcraft",name:"Wood Craft",trade:"Laminate / millwork",contacts:[{name:"Sonia",phone:"",email:""}],address:"",notes:"Max Ewy quote contact."},
+ {id:"s_dynafire",name:"Dyna Fire",trade:"Fire / HVAC duct detectors",contacts:[{name:"Isaac & Bruce",phone:"",email:""}],address:"",notes:"Duct detector on return, not supply."},
+ {id:"s_curbo",name:"Curbo",trade:"Concrete / wheel stops",contacts:[{name:"Luke",phone:"",email:""}],address:"",notes:"Verbal quotes by phone. ~4-5 day jobs."},
+ {id:"s_shaw",name:"Shaw",trade:"Flooring / carpet (material)",contacts:[{name:"",phone:"",email:""}],address:"",notes:"Carpet tile supplier."},
+ {id:"s_mccann",name:"McCann Handyman Services",trade:"Handyman",contacts:[{name:"",phone:"",email:""}],address:"",notes:"Asked to reduce pricing 9/1."}
+];
+ 
+/* ---------------- work order seed ---------------- */
+const mk=(o)=>{const b={budget:"",actual:"",subId:"",...o};b.log=o.history?[{ts:"",text:o.history,legacy:true}]:[];return b;};
+const SEED=[
+ mk({wo:"200-2529",job:"52572",region:"IL",client:"",location:"9700 S 13th St, Oak Creek, WI (MKE2)",scope:"Flush valves and faucets",subId:"s_burim",sub:"Burim",fm:"",contact:"Debbie",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-06-04",lastContact:"2026-08-13",next:"Follow up with Debbie on the award — survey invoice sent 6/26, still no award.",history:"Quoted 6/5 (faucet price estimated). Burim survey invoice emailed to Debbie 6/26. Waiting on award 8/13."}),
+ mk({wo:"0231-888",job:"52839",region:"FL-West",client:"CBRE - AT&T",location:"1332 N John Young Pkwy, Kissimmee, FL 34741",scope:"Laminate repair FOH & BOH — check ALL laminate on site, add any extra areas to the quote",subId:"s_diamond",sub:"Wood Craft (Sonia) / Diamond Painting",fm:"Maria McArdle",contact:"Jay Rios",phone:"407-456-0758",nte:"$350",budget:"350",pri:"P4",rush:false,status:"Awaiting Sub Quote",due:"2026-07-02",lastContact:"2026-09-01",next:"Get BOH quote from Diamond Painting; reconcile with Wood Craft/Max Ewy quote, then submit.",history:"Arrive-by 6/27 1PM. Wood Craft (Sonia)-Max Ewy quote received 7/22. Diamond FOH received, need answers + BOH quote (8/10). Moises resurveyed 8/13. Cheyli working 9/1."}),
+ mk({wo:"0205-1000",job:"51960",region:"FL-West",client:"CBRE - AT&T",location:"2351 E Fowler Ave, Tampa, FL 33609",scope:"Touch up/refinish laminate (FOH) — 2 community tables on salesfloor lifting. Pics requested",subId:"s_diamond",sub:"Diamond Painting / McCann / handymen",fm:"Maria McArdle",contact:"Melissa Macaluso",phone:"727-255-4936",nte:"$350",budget:"350",pri:"P5",rush:false,status:"Approved",due:"2026-06-06",lastContact:"2026-09-01",next:"Lock in a handyman: waiting on McCann price cut; compare High Quality Handyman + Tampa Handy Pro, then schedule.",history:"Arrive-by 5/29 5:30PM. APPROVED 6/3. Material left for Mike & Yianni. Dispatched Diamond Painting 7/30. Asked McCann to reduce price 9/1. Emailed High Quality Handyman & Tampa Handy Pro 9/1. Cheyli working 9/1."}),
+ mk({wo:"2011-1147.04",job:"50363",region:"FL-East",client:"",location:"7703 W Flagler St, Miami",scope:"(scope not captured yet)",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"New",due:"",lastContact:"",next:"Pull this WO in MHelpDesk — no scope, sub, or status captured. Find out where it stands.",history:"Listed with no detail in Sarah's notes. Needs full lookup."}),
+ mk({wo:"2011-1147.06",job:"52362",region:"FL-East",client:"",location:"Miami area",scope:"Replace HVAC unit PAC-03 + install new duct detector",subId:"s_dynafire",sub:"Dyna Fire (Isaac & Bruce)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"",lastContact:"2026-09-01",next:"Get update on the 8/11 inspection (4th) and confirm the duct detector is on the return, not the supply.",history:"APPROVED 1/27. Smoke issue - detector needed on return not supply (3/20). Twin Island Refrigeration, then Brophy Air (Gabriel Rodriguez), then Dyna Fire. APPROVED again 6/1. Scheduled 8/11 for a 4th inspection - need update (8/20; 9/1)."}),
+ mk({wo:"200-2450",job:"51842",region:"FL/Amazon",client:"Amazon",location:"2600 N Normandy Blvd, Deltona (MCO2)",scope:"Desk remodel",subId:"s_diamond",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"Quote Submitted",due:"2026-04-24",lastContact:"2026-06-23",next:"Badly overdue and silent since June. Chase the award in FairMarkit / escalate.",history:"Quoted 5/15 (material was a rough guess). Checked FairMarkit 6/4. Waiting for award 6/23."}),
+ mk({wo:"200-2547",job:"52658",region:"FL/Amazon",client:"Amazon",location:"2501 Normandy Blvd, Deltona (QZZ1)",scope:"Desk work + electrical + security system",subId:"s_diamond",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"In Progress",due:"2026-06-11",lastContact:"2026-08-20",next:"Confirm remaining work is done. Dust containment (opaque tarps, 4 sides + roof), electric saw only, electrical afterhours, to code.",history:"Quoted 6/12 FairMarkit - Diamond fabricating desk. APPROVED 7/16. Scheduled 8/3-8/6, still more work 8/20."}),
+ mk({wo:"113436-02",job:"53453",region:"NY-North",client:"Amazon",location:"4201 Walden Ave, Lancaster (BUF5)",scope:"Quote for painting",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"2026-08-14",lastContact:"2026-09-02",next:"Confirm the 9/2 painting happened and close it out.",history:"Scheduled 9/2."}),
+ mk({wo:"114028-02 RFE",job:"53240",region:"NY-North",client:"Amazon",location:"BUF9",scope:"Hang TVs + relocate projector screen",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"",lastContact:"2026-07-28",next:"Follow up on the award — silent since late July.",history:"Quoted 7/28 - noted use of lift and travel hours."}),
+ mk({wo:"1852-517.02",job:"53781",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace ceiling tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-10",lastContact:"",next:"Get it scheduled before the 9/10 due date.",history:"Scheduled: ???"}),
+ mk({wo:"1852-515",job:"53706",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace carpet tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-09",lastContact:"",next:"Schedule for ~9/7 alongside the WV carpet job, once Shaw carpet arrives.",history:"Scheduled: ??? (aim 9/7 with the WV job once Shaw carpet comes in)."}),
+ mk({wo:"200-2650",job:"53666",region:"PA-West",client:"Amazon",location:"165 Gleen Gox Rd, New Stanton, PA",scope:"Install 221 wheel stops + paint them",subId:"s_curbo",sub:"Curbo",fm:"",contact:"Luke",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-08-26",lastContact:"2026-08-26",next:"Follow up on the Curbo quote award (they estimate 4-5 days).",history:"Curbo estimate 4-5 days, verbal over phone w/ Luke. Quoted 8/26."}),
+ mk({wo:"2426-260",job:"53520 / 53715",region:"WV",client:"CBRE - AT&T",location:"9909 Mall Road, Morgantown, WV",scope:"Replace carpet tiles",subId:"s_shaw",sub:"Shaw (material)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Parts Ordered",due:"2026-08-25",lastContact:"2026-08-31",next:"Track the Shaw carpet (FedEx 876575752601), then schedule install ~9/7 with the PA carpet job.",history:"APPROVED 8/31. Placed carpet order with Shaw 8/31. FedEx tracking # 876575752601."})
 ];
 const STATUSES=["New","Needs Sub","Survey Needed","Awaiting Sub Quote","Quote Submitted","Approved","Parts Ordered","Scheduled","In Progress","Complete"];
 const PRIS=["","P1","P2","P3","P4","P5"];
-
-/* ---------------- flag logic (mirrors the spreadsheet) ---------------- */
+ 
+/* ---------------- flags (unchanged logic) ---------------- */
 const FLAG={
  past_due:{key:"past_due",label:"PAST DUE",color:"var(--pastdue)"},
  due_soon:{key:"due_soon",label:"DUE SOON",color:"var(--duesoon)"},
- rush:{key:"rush",label:"RUSH",color:"var(--rush)"},
- follow_up:{key:"follow_up",label:"FOLLOW UP",color:"var(--followup)",dark:true},
+ follow_up:{key:"follow_up",label:"FOLLOW UP",color:"var(--followup)"},
  in_motion:{key:"in_motion",label:"IN MOTION",color:"var(--motion)"},
  done:{key:"done",label:"DONE",color:"var(--done)"},
  ok:{key:"ok",label:"ON TRACK",color:"var(--ok)"}
 };
 const DAY=86400000;
 function today(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
-function parseD(s){if(!s)return null;const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
-function daysBetween(a,b){return Math.round((a-b)/DAY);}
+function parseD(s){if(!s)return null;const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function db(a,b){return Math.round((a-b)/DAY);}
 function statusFlag(w,cfg){
   const t=today();
   if(w.status==="Complete")return {...FLAG.done};
   const due=parseD(w.due), lc=parseD(w.lastContact);
   const active=["Scheduled","In Progress","Parts Ordered"].includes(w.status);
-  if(due && due<t && !active){return {...FLAG.past_due,extra:daysBetween(t,due)+"d late"};}
-  if(due && due>=t && daysBetween(due,t)<=cfg.dueSoon && !active){return {...FLAG.due_soon,extra:"in "+daysBetween(due,t)+"d"};}
+  if(due&&due<t&&!active)return {...FLAG.past_due,extra:db(t,due)+"d late"};
+  if(due&&due>=t&&db(due,t)<=cfg.dueSoon&&!active)return {...FLAG.due_soon,extra:"in "+db(due,t)+"d"};
   const waiting=["Quote Submitted","Awaiting Sub Quote","Needs Sub","Survey Needed"].includes(w.status);
-  if(lc && daysBetween(t,lc)>cfg.followUp && waiting){return {...FLAG.follow_up,extra:daysBetween(t,lc)+"d quiet"};}
+  if(lc&&db(t,lc)>cfg.followUp&&waiting)return {...FLAG.follow_up,extra:db(t,lc)+"d quiet"};
   if(["Scheduled","In Progress"].includes(w.status))return {...FLAG.in_motion};
   return {...FLAG.ok};
 }
 function severity(w,cfg){
   const f=statusFlag(w,cfg).key;
   const base={past_due:0,due_soon:2,follow_up:3,in_motion:4,ok:5,done:7}[f];
-  return w.rush ? Math.min(base,1) : base;
+  return w.rush&&w.status!=="Complete"?Math.min(base,1):base;
 }
-function daysQuiet(w){const lc=parseD(w.lastContact);if(!lc)return null;return daysBetween(today(),lc);}
-function fmtDate(s){if(!s)return "";const [y,m,d]=s.split("-");return `${+m}/${+d}/${String(y).slice(2)}`;}
-function todayStr(){const t=today();return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;}
+function daysQuiet(w){const lc=parseD(w.lastContact);if(!lc)return null;return db(today(),lc);}
+function num(v){if(v==null)return NaN;const n=parseFloat(String(v).replace(/[^0-9.]/g,""));return isNaN(n)?NaN:n;}
+function budgetState(w){
+  const b=num(w.budget), a=num(w.actual);
+  if(isNaN(b)||b<=0||isNaN(a))return null;
+  const pct=a/b;
+  let key="under",color="var(--under)",msg="";
+  if(a>b){key="over";color="var(--over)";msg="Over budget by "+money(a-b)+" — needs Sentry approval.";}
+  else if(pct>=0.9){key="near";color="var(--near)";msg="At "+Math.round(pct*100)+"% of budget — watch the cap.";}
+  return {key,color,pct:Math.min(pct,1),b,a,msg};
+}
+function money(n){return "$"+n.toLocaleString(undefined,{maximumFractionDigits:2});}
+function fmtDate(s){if(!s)return "";const[y,m,d]=s.split("-");return (+m)+"/"+(+d)+"/"+String(y).slice(2);}
+function todayStr(){const t=today();return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");}
+function fmtDT(iso){const d=new Date(iso);if(isNaN(d))return iso;
+  return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-
-/* ---------------- storage (Supabase -> localStorage -> memory) ---------------- */
-const LKEY="wo_board_v1", CKEY="wo_cfg_v1";
-let mem=null;
-function localGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
-function localSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
-const sync = !!(window.SUPABASE_URL && window.SUPABASE_ANON_KEY);
+ 
+/* ---------------- storage ---------------- */
+const WKEY="wo_board_v3", SKEY="wo_subs_v3", CKEY="wo_cfg_v2";
+let memW=null,memS=null;
+function lGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
+const sync=!!(window.SUPABASE_URL&&window.SUPABASE_ANON_KEY);
 let sb=null;
+async function loadSB(){if(!window.supabase){await new Promise((res,rej)=>{const s=document.createElement("script");
+  s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+  sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);}
 async function initStore(){
-  if(sync){
-    try{
-      if(!window.supabase){await new Promise((res,rej)=>{const s=document.createElement("script");
-        s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
-      sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-      const {data,error}=await sb.from("work_orders").select("*").order("created_at",{ascending:true});
-      if(error)throw error;
-      if(!data||data.length===0){const seeded=SEED.map(s=>({...s,id:uid()}));
-        await sb.from("work_orders").insert(seeded);return seeded;}
-      return data;
-    }catch(e){console.warn("sync failed, using local",e);}
-  }
-  const raw=localGet(LKEY);
-  if(raw){try{return JSON.parse(raw);}catch(e){}}
-  if(mem)return mem;
-  const seeded=SEED.map(s=>({...s,id:uid()}));
-  persist(seeded); return seeded;
+  if(sync){try{await loadSB();
+    let {data:wd}=await sb.from("work_orders").select("*").order("created_at",{ascending:true});
+    let {data:sd}=await sb.from("subs").select("*").order("created_at",{ascending:true});
+    if(!sd||sd.length===0){sd=SUB_SEED.map(s=>({...s}));await sb.from("subs").insert(sd);}
+    if(!wd||wd.length===0){wd=SEED.map(s=>({...s,id:uid()}));await sb.from("work_orders").insert(wd);}
+    wd=wd.map(w=>w.log?w:{...w,log:[]});
+    sd=sd.map(x=>x.contacts?x:{...x,contacts:[{name:x.contactName||"",phone:x.phone||"",email:x.email||""}]});
+    return {rows:wd,subs:sd};
+  }catch(e){console.warn("sync failed → local",e);}}
+  const rw=lGet(WKEY), rs=lGet(SKEY);
+  let rows=rw?safe(rw):null, subs=rs?safe(rs):null;
+  if(!rows){rows=memW||SEED.map(s=>({...s,id:uid()}));}
+  if(!subs){subs=memS||SUB_SEED.map(s=>({...s}));}
+  rows=rows.map(w=>w.log?w:{...w,log:[]});
+  subs=subs.map(x=>x.contacts?x:{...x,contacts:[{name:x.contactName||"",phone:x.phone||"",email:x.email||""}]});
+  persistW(rows);persistS(subs);
+  return {rows,subs};
 }
-function persist(rows){mem=rows;localSet(LKEY,JSON.stringify(rows));}
-async function saveRow(rows,row){
-  persist(rows);
-  if(sync&&sb){try{await sb.from("work_orders").upsert(row);}catch(e){console.warn(e);}}
-}
-async function delRow(rows,id){
-  persist(rows);
-  if(sync&&sb){try{await sb.from("work_orders").delete().eq("id",id);}catch(e){console.warn(e);}}
-}
-
+function safe(s){try{return JSON.parse(s);}catch(e){return null;}}
+function persistW(r){memW=r;lSet(WKEY,JSON.stringify(r));}
+function persistS(s){memS=s;lSet(SKEY,JSON.stringify(s));}
+async function saveW(rows,row){persistW(rows);if(sync&&sb)try{await sb.from("work_orders").upsert(row);}catch(e){}}
+async function delW(rows,id){persistW(rows);if(sync&&sb)try{await sb.from("work_orders").delete().eq("id",id);}catch(e){}}
+async function saveS(subs,sub){persistS(subs);if(sync&&sb)try{await sb.from("subs").upsert(sub);}catch(e){}}
+ 
 /* ---------------- icons ---------------- */
 const I={
  search:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
  phone:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>,
  check:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6L9 17l-5-5"/></svg>,
  edit:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>,
- plus:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6"><path d="M12 5v14M5 12h14"/></svg>
+ plus:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6"><path d="M12 5v14M5 12h14"/></svg>,
+ back:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M15 18l-6-6 6-6"/></svg>
 };
-
-/* ---------------- card ---------------- */
-function Card({w,cfg,onEdit,onLog,onDelete}){
-  const [open,setOpen]=useState(false);
-  const f=statusFlag(w,cfg);
-  const dq=daysQuiet(w);
-  const late=f.key==="past_due";
+ 
+/* ---------------- work order card ---------------- */
+function Card({w,cfg,onOpen,onLog}){
+  const f=statusFlag(w,cfg), dq=daysQuiet(w), bs=budgetState(w), late=f.key==="past_due";
   return (
    <div className="card">
      <div className="rail" style={{background:f.color}}/>
-     <div className="body">
+     <div className="cbody tapopen" onClick={()=>onOpen(w)}>
        <div className="r1">
-         <span className="chip" style={{background:f.color,color:f.dark?"#3a2c00":"#fff"}}>
-           {f.label}{f.extra?" · "+f.extra:""}</span>
-         {w.rush && f.key!=="rush" && <span className="chip" style={{background:"var(--rush)"}}>RUSH</span>}
-         {w.pri && <span className="pill">{w.pri}</span>}
+         <span className="chip" style={{background:f.color}}>{f.label}{f.extra?" · "+f.extra:""}</span>
+         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>RUSH</span>}
+         {w.pri&&<span className="pill">{w.pri}</span>}
+         {bs&&bs.key!=="under"&&<span className="budgetbadge" style={{background:bs.color}}>{bs.key==="over"?"OVER $":Math.round(bs.pct*100)+"% $"}</span>}
          <span className="spacer"/>
-         <button className="wo mono" onClick={()=>setOpen(o=>!o)}>{w.wo}<span className="caret">{open?"▲":"▼"}</span></button>
+         <span className="wo mono">{w.wo}</span>
        </div>
        <div className="r2"><span className="loc">{w.location||"—"}</span>{w.client?" · "+w.client:""}</div>
-       {w.scope && <div className="scope">{w.scope}</div>}
+       {w.scope&&<div className="scope">{w.scope}</div>}
        <div className="meta">
-         {w.due && <span className={"due"+(late?" late":"")}><b>Due</b> {fmtDate(w.due)}</span>}
+         {w.due&&<span className={"due"+(late?" late":"")}><b>Due</b> {fmtDate(w.due)}</span>}
          <span><b>Status</b> {w.status}</span>
-         {dq!=null && <span><b>Quiet</b> {dq}d</span>}
-         {w.sub && <span><b>Sub</b> {w.sub}</span>}
+         {dq!=null&&<span><b>Quiet</b> {dq}d</span>}
        </div>
-       {w.next && <div className="next">{w.next}</div>}
+       {w.next&&<div className="next">{w.next}</div>}
+     </div>
+     <div style={{padding:"0 13px 12px",marginTop:"-4px"}}>
        <div className="acts">
-         {w.phone && <a className="act call" href={"tel:"+w.phone.replace(/[^0-9+]/g,"")}>{I.phone} Call{w.contact?" "+w.contact.split(" ")[0]:""}</a>}
-         <button className="act log" onClick={()=>onLog(w)}>{I.check} Log contact</button>
-         <button className="act" onClick={()=>onEdit(w)}>{I.edit} Edit</button>
+         {w.phone&&<a className="act call" onClick={e=>e.stopPropagation()} href={"tel:"+w.phone.replace(/[^0-9+]/g,"")}>{I.phone} Call</a>}
+         <button className="act log" onClick={e=>{e.stopPropagation();onLog(w);}}>{I.check} Log contact</button>
+         <button className="act" onClick={e=>{e.stopPropagation();onOpen(w);}}>{I.edit} Open</button>
        </div>
      </div>
-     {open &&
-       <div className="expand" style={{flexBasis:"100%"}}>
-         <dl className="dl">
-           {w.job && <><dt>Job #</dt><dd className="mono">{w.job}</dd></>}
-           {w.fm && <><dt>FM</dt><dd>{w.fm}</dd></>}
-           {w.contact && <><dt>Contact</dt><dd>{w.contact}{w.phone?" · "+w.phone:""}</dd></>}
-           {w.nte && <><dt>NTE</dt><dd>{w.nte}</dd></>}
-           {w.lastContact && <><dt>Last contact</dt><dd>{fmtDate(w.lastContact)}</dd></>}
-           <dt>Region</dt><dd>{w.region||"—"}</dd>
-         </dl>
-         {w.history && <div className="hist"><span className="lab">History</span>{w.history}</div>}
-         <div className="rowbtns">
-           <button className="link del" onClick={()=>onDelete(w)}>Delete work order</button>
-         </div>
-       </div>}
    </div>
   );
 }
-
-/* ---------------- edit sheet ---------------- */
-function EditSheet({w,onSave,onClose}){
-  const blank={id:uid(),wo:"",job:"",region:"",client:"",location:"",scope:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:""};
-  const [f,setF]=useState(w||blank);
-  const set=(k)=>(e)=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
+ 
+/* ---------------- work order detail ---------------- */
+function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSaveNotes,openSub}){
+  const [draft,setDraft]=useState("");
+  const [notes,setNotes]=useState(w.history||"");
+  const f=statusFlag(w,cfg), bs=budgetState(w);
+  const sub=subs.find(s=>s.id===w.subId);
+  const log=[...(w.log||[])].sort((a,b)=>b.ts.localeCompare(a.ts));
+  return (
+   <div className="detail">
+     <div className="dhead">
+       <div className="top1">
+         <span className="chip" style={{background:f.color}}>{f.label}{f.extra?" · "+f.extra:""}</span>
+         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>RUSH</span>}
+         {w.pri&&<span className="pill">{w.pri}</span>}
+         <span className="pill">{w.status}</span>
+       </div>
+       <h2 className="mono">{w.wo}</h2>
+       <div className="loc">{w.location||"—"}{w.client?" · "+w.client:""}</div>
+       {w.scope&&<div className="dscope">{w.scope}</div>}
+       <div className="acts" style={{marginTop:13}}>
+         {w.phone&&<a className="act call" href={"tel:"+w.phone.replace(/[^0-9+]/g,"")}>{I.phone} Call {w.contact||""}</a>}
+         <button className="act log" onClick={()=>onAddLog(w,"Contact logged")}>{I.check} Log contact</button>
+         <button className="act" onClick={()=>onEdit(w)}>{I.edit} Edit</button>
+       </div>
+     </div>
+ 
+     <div className="sec">
+       <h4>Details</h4>
+       <dl className="kv">
+         {w.job&&<><dt>Job #</dt><dd className="mono">{w.job}</dd></>}
+         <dt>Sub</dt><dd>{sub?<span className="sublink" onClick={()=>openSub(sub.id)}>{sub.name}</span>:(w.sub||"—")}</dd>
+         {w.fm&&<><dt>FM</dt><dd>{w.fm}</dd></>}
+         {w.contact&&<><dt>Contact</dt><dd>{w.contact}{w.phone?" · "+w.phone:""}</dd></>}
+         {w.nte&&<><dt>NTE</dt><dd>{w.nte}</dd></>}
+         <dt>Due</dt><dd>{w.due?fmtDate(w.due):"—"}</dd>
+         <dt>Region</dt><dd>{w.region||"—"}</dd>
+         {w.lastContact&&<><dt>Last contact</dt><dd>{fmtDate(w.lastContact)}</dd></>}
+       </dl>
+     </div>
+ 
+     {(w.budget||w.actual||bs)&&
+      <div className="sec">
+       <h4>Budget</h4>
+       {bs?<>
+         <div className="bbar"><span style={{width:(bs.pct*100)+"%",background:bs.color}}/></div>
+         <div className="bnums"><span>Actual <b>{money(bs.a)}</b></span><span>Budget <b>{money(bs.b)}</b></span></div>
+         {bs.msg&&<div className="bwarn" style={{background:bs.key==="over"?"#fdeceb":"#fdf3e8",color:bs.color}}>{bs.msg}</div>}
+       </>:<div style={{fontSize:13,color:"var(--muted)"}}>Set a budget and actual in Edit to track the cap.</div>}
+      </div>}
+ 
+     <div className="sec">
+       <h4>Update log <span className="r">{log.length} {log.length===1?"entry":"entries"}</span></h4>
+       <div className="logadd">
+         <textarea placeholder="What happened? (called sub, got quote, scheduled…)" value={draft} onChange={e=>setDraft(e.target.value)}/>
+         <button onClick={()=>{if(draft.trim()){onAddLog(w,draft.trim());setDraft("");}}}>Post update</button>
+       </div>
+       {log.length===0?<div style={{fontSize:13,color:"var(--faint)"}}>No updates yet. Your first one will be stamped with the date and time automatically.</div>
+        :log.map((e,i)=><div key={i} className={"logentry"+(e.legacy?" legacy":"")}>
+            <div className="ts">{e.legacy?"Imported from notes":fmtDT(e.ts)}</div>
+            <div className="tx">{e.text}</div></div>)}
+     </div>
+ 
+     <div className="sec">
+       <h4>Notes <span className="r">freeform · not logged</span></h4>
+       <textarea className="noteedit" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Freeform notes for this order — edit anytime. Not timestamped."/>
+       {notes!==(w.history||"")&&<button className="btn pri" style={{marginTop:9}} onClick={()=>onSaveNotes(w,notes)}>Save note</button>}
+     </div>
+ 
+     <div className="rowbtns">
+       {w.status!=="Complete"
+        ? <button className="btn done" onClick={()=>onComplete(w)}>Mark complete</button>
+        : <button className="btn ghost" onClick={()=>onReopen(w)}>Reopen</button>}
+       <button className="btn del" onClick={()=>onDelete(w)}>Delete</button>
+     </div>
+   </div>
+  );
+}
+ 
+/* ---------------- sub detail ---------------- */
+function SubDetail({sub,rows,cfg,onEdit,openWO}){
+  const jobs=rows.filter(r=>r.subId===sub.id);
+  const active=jobs.filter(j=>j.status!=="Complete"), done=jobs.filter(j=>j.status==="Complete");
+  const contacts=(sub.contacts||[]).filter(c=>c&&(c.name||c.phone||c.email));
+  const primary=contacts.find(c=>c.phone);
+  const JobLine=({j})=>{const f=statusFlag(j,cfg);return (
+    <div className="jobmini" onClick={()=>openWO(j.id)}>
+      <span className="fl" style={{background:f.color}}>{f.label}</span>
+      <span className="wo mono">{j.wo}</span>
+      <span className="loc">{j.location}</span></div>);};
+  return (
+   <div className="detail">
+     <div className="dhead">
+       <h2 style={{marginTop:0}}>{sub.name}</h2>
+       <div className="acts" style={{marginTop:13}}>
+         {primary&&<a className="act call" href={"tel:"+primary.phone.replace(/[^0-9+]/g,"")}>{I.phone} Call</a>}
+         <button className="act" onClick={()=>onEdit(sub)}>{I.edit} Edit</button>
+       </div>
+     </div>
+     <div className="sec"><h4>Trade / type of work</h4>
+       <div className="hist">{sub.trade||"Not set yet — add it in Edit."}</div></div>
+     <div className="sec">
+       <h4>Contacts <span className="r">{contacts.length}/3</span></h4>
+       {contacts.length===0
+        ?<div style={{fontSize:13,color:"var(--faint)"}}>No contacts yet — add up to 3 in Edit.</div>
+        :contacts.map((c,i)=><div key={i} className="contactcard">
+            <div className="cn">{c.name||"Contact "+(i+1)}</div>
+            <div className="cd">
+              {c.phone&&<a className="sublink" href={"tel:"+c.phone.replace(/[^0-9+]/g,"")}>{c.phone}</a>}
+              {c.phone&&c.email?"  ·  ":""}
+              {c.email&&<span>{c.email}</span>}
+            </div>
+          </div>)}
+       {sub.address&&<div style={{marginTop:11,fontSize:13,color:"var(--muted)"}}><b style={{color:"var(--faint)",fontWeight:600}}>Address </b>{sub.address}</div>}
+     </div>
+     <div className="sec"><h4>Notes</h4><div className="hist">{sub.notes||"No notes yet."}</div></div>
+     <div className="sec">
+       <h4>Jobs <span className="r">{active.length} active · {done.length} done</span></h4>
+       {jobs.length===0?<div style={{fontSize:13,color:"var(--faint)"}}>Not assigned to any work orders yet.</div>:<>
+        {active.map(j=><JobLine key={j.id} j={j}/>)}
+        {done.map(j=><JobLine key={j.id} j={j}/>)}
+       </>}
+     </div>
+   </div>
+  );
+}
+ 
+/* ---------------- edit sheets ---------------- */
+function EditSheet({w,subs,onSave,onClose,onNewSub}){
+  const blank={id:uid(),wo:"",job:"",region:"",client:"",location:"",scope:"",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",budget:"",actual:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:"",log:[]};
+  const [f,setF]=useState(w?{...w}:blank);
+  const set=k=>e=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
   const isNew=!w;
   return (
    <div className="scrim" onClick={onClose}>
@@ -316,17 +510,29 @@ function EditSheet({w,onSave,onClose}){
            <div className="fg"><label>WO #</label><input value={f.wo} onChange={set("wo")} placeholder="0205-1000"/></div>
            <div className="fg"><label>Job #</label><input value={f.job} onChange={set("job")} placeholder="51960"/></div>
          </div>
-         <div className="fg"><label>Location</label><input value={f.location} onChange={set("location")} placeholder="Address, city, state"/></div>
+         <div className="fg"><label>Location</label><input value={f.location} onChange={set("location")}/></div>
          <div className="fg"><label>Scope of work</label><textarea value={f.scope} onChange={set("scope")}/></div>
          <div className="two">
            <div className="fg"><label>Client</label><input value={f.client} onChange={set("client")} placeholder="CBRE - AT&T"/></div>
-           <div className="fg"><label>Region</label><input value={f.region} onChange={set("region")} placeholder="FL-West"/></div>
+           <div className="fg"><label>Region</label><input value={f.region} onChange={set("region")}/></div>
          </div>
-         <div className="fg"><label>Sub / vendor</label><input value={f.sub} onChange={set("sub")}/></div>
+         <div className="fg"><label>Sub / vendor</label>
+           <div className="picker">
+             <select value={f.subId} onChange={set("subId")}>
+               <option value="">— none —</option>
+               {subs.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+             </select>
+             <button onClick={()=>onNewSub(f,setF)}>+ New</button>
+           </div>
+         </div>
          <div className="three">
            <div className="fg"><label>Status</label><select value={f.status} onChange={set("status")}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
            <div className="fg"><label>Priority</label><select value={f.pri} onChange={set("pri")}>{PRIS.map(p=><option key={p} value={p}>{p||"—"}</option>)}</select></div>
            <div className="fg"><label>NTE cap</label><input value={f.nte} onChange={set("nte")} placeholder="$350"/></div>
+         </div>
+         <div className="two">
+           <div className="fg"><label>Budget ($)</label><input value={f.budget} onChange={set("budget")} inputMode="decimal" placeholder="350"/></div>
+           <div className="fg"><label>Actual charged ($)</label><input value={f.actual} onChange={set("actual")} inputMode="decimal" placeholder=""/></div>
          </div>
          <div className="two">
            <div className="fg"><label>Due (complete by)</label><input type="date" value={f.due} onChange={set("due")}/></div>
@@ -334,11 +540,11 @@ function EditSheet({w,onSave,onClose}){
          </div>
          <div className="two">
            <div className="fg"><label>Site contact</label><input value={f.contact} onChange={set("contact")}/></div>
-           <div className="fg"><label>Phone</label><input value={f.phone} onChange={set("phone")} placeholder="407-456-0758"/></div>
+           <div className="fg"><label>Phone</label><input value={f.phone} onChange={set("phone")}/></div>
          </div>
          <div className="fg"><label>FM (escalation)</label><input value={f.fm} onChange={set("fm")}/></div>
          <div className="fg"><label>Next action</label><textarea value={f.next} onChange={set("next")}/></div>
-         <div className="fg"><label>History / notes</label><textarea value={f.history} onChange={set("history")} style={{minHeight:"90px"}}/></div>
+         <div className="fg"><label>Original notes (freeform)</label><textarea value={f.history} onChange={set("history")} style={{minHeight:80}}/></div>
          <div className="fg"><label className="rushtog"><input type="checkbox" checked={f.rush} onChange={set("rush")}/><span>Mark as RUSH — jumps to the top</span></label></div>
          <button className="save" onClick={()=>{if(!f.wo.trim())f.wo="(no WO #)";onSave(f);}}>{isNew?"Add work order":"Save changes"}</button>
        </div>
@@ -346,154 +552,220 @@ function EditSheet({w,onSave,onClose}){
    </div>
   );
 }
-
-/* ---------------- sync info sheet ---------------- */
+ 
+function SubEditSheet({sub,onSave,onClose}){
+  const base=sub?{...sub}:{id:uid(),name:"",trade:"",contacts:[],address:"",notes:""};
+  const pad=[0,1,2].map(i=>(base.contacts&&base.contacts[i])?{...base.contacts[i]}:{name:"",phone:"",email:""});
+  const [f,setF]=useState({...base,contacts:pad});
+  const set=k=>e=>setF(p=>({...p,[k]:e.target.value}));
+  const setC=(i,k)=>e=>setF(p=>({...p,contacts:p.contacts.map((x,j)=>j===i?{...x,[k]:e.target.value}:x)}));
+  return (
+   <div className="scrim" onClick={onClose}>
+     <div className="sheet" onClick={e=>e.stopPropagation()}>
+       <header><h2>{sub?"Edit "+f.name:"New sub"}</h2><button className="x" onClick={onClose}>✕</button></header>
+       <div className="form">
+         <div className="fg"><label>Name</label><input value={f.name} onChange={set("name")} placeholder="Diamond Painting"/></div>
+         <div className="fg"><label>Trade / type of work</label><input value={f.trade} onChange={set("trade")} placeholder="Painting / laminate"/></div>
+         <div className="hint">Add up to 3 contacts.</div>
+         {[0,1,2].map(i=><div key={i} className="fg">
+           <label>Contact {i+1}</label>
+           <div className="two" style={{marginBottom:8}}>
+             <input value={f.contacts[i].name} onChange={setC(i,"name")} placeholder="Name"/>
+             <input value={f.contacts[i].phone} onChange={setC(i,"phone")} placeholder="Phone"/>
+           </div>
+           <input value={f.contacts[i].email} onChange={setC(i,"email")} placeholder="Email (optional)"/>
+         </div>)}
+         <div className="fg"><label>Address</label><input value={f.address} onChange={set("address")}/></div>
+         <div className="fg"><label>Notes</label><textarea value={f.notes} onChange={set("notes")}/></div>
+         <button className="save" onClick={()=>{if(f.name.trim()){onSave({...f,contacts:f.contacts.filter(c=>c.name||c.phone||c.email)});}}}>{sub?"Save changes":"Add sub"}</button>
+       </div>
+     </div>
+   </div>
+  );
+}
+ 
 function SyncSheet({onClose}){
   return (
    <div className="scrim" onClick={onClose}>
      <div className="sheet" onClick={e=>e.stopPropagation()}>
        <header><h2>Turn on phone ↔ computer sync</h2><button className="x" onClick={onClose}>✕</button></header>
        <div className="form">
-         <div className="syncbox">
-           Right now your board saves to <b>this device only</b>. To sync it across your phone and computer,
-           connect a free Supabase database — about 15 minutes, one time.
-         </div>
-         <div className="syncbox">
-           <b>1.</b> Make a free project at <b>supabase.com</b>.<br/>
-           <b>2.</b> In the SQL editor, run:<br/>
-           <code>create table work_orders (id text primary key, wo text, job text, region text, client text, location text, scope text, sub text, fm text, contact text, phone text, nte text, pri text, rush bool, status text, due text, "lastContact" text, next text, history text, created_at timestamptz default now());</code><br/><br/>
-           <code>alter table work_orders enable row level security;</code><br/>
-           <code>create policy "all" on work_orders for all using (true) with check (true);</code>
-         </div>
-         <div className="syncbox">
-           <b>3.</b> In <b>Project Settings → API</b>, copy your <b>Project URL</b> and <b>anon public key</b>.<br/>
-           <b>4.</b> Paste them into the top of <code>index.html</code> (the SUPABASE_URL / SUPABASE_ANON_KEY lines) and redeploy.<br/><br/>
-           That's it — open it on any device and it's the same board. Full steps are in the README.
-         </div>
+         <div className="syncbox">Right now your board saves to <b>this device only</b>. To sync across devices, connect a free Supabase database — about 15 minutes, one time. Full steps (including the two tables you need) are in the README.</div>
+         <div className="syncbox"><b>1.</b> Make a free project at <b>supabase.com</b>.<br/><b>2.</b> Run the two <code>create table</code> blocks from the README in the SQL editor (work_orders + subs).<br/><b>3.</b> Paste your Project URL + anon key into the top of <code>index.html</code> and redeploy.</div>
        </div>
      </div>
    </div>
   );
 }
-
+ 
 /* ---------------- app ---------------- */
 function App(){
   const [rows,setRows]=useState(null);
-  const [q,setQ]=useState("");
-  const [region,setRegion]=useState("");
-  const [status,setStatus]=useState("");
-  const [flagFilter,setFlag]=useState("");
-  const [sort,setSort]=useState("urgent");
+  const [subs,setSubs]=useState(null);
+  const [stack,setStack]=useState([{name:"board"}]);
+  const view=stack[stack.length-1];
+  const nav=v=>setStack(s=>[...s,v]);
+  const back=()=>setStack(s=>s.length>1?s.slice(0,-1):s);
+  const root=name=>setStack([{name}]);
+ 
+  const [q,setQ]=useState(""),[region,setRegion]=useState(""),[client,setClient]=useState(""),
+        [status,setStatus]=useState(""),[pri,setPri]=useState(""),[flagFilter,setFlag]=useState(""),[sort,setSort]=useState("urgent");
   const [editing,setEditing]=useState(null);
+  const [editSub,setEditSub]=useState(null);
+  const [pendingSubTarget,setPendingSubTarget]=useState(null);
   const [showSync,setShowSync]=useState(false);
-  const [cfg,setCfg]=useState(()=>{const r=localGet(CKEY);return r?JSON.parse(r):{followUp:7,dueSoon:10};});
-
-  useEffect(()=>{initStore().then(setRows);},[]);
-  useEffect(()=>{localSet(CKEY,JSON.stringify(cfg));},[cfg]);
-
-  if(!rows)return <div style={{padding:40,textAlign:"center",color:"var(--muted)"}}>Loading board…</div>;
-
+  const [cfg]=useState(()=>{const r=lGet(CKEY);return r?safe(r):{followUp:7,dueSoon:10};});
+ 
+  useEffect(()=>{initStore().then(d=>{setRows(d.rows);setSubs(d.subs);});},[]);
+ 
+  if(!rows||!subs)return <div style={{padding:44,textAlign:"center",color:"var(--muted)",fontFamily:"Quicksand"}}>Loading your board…</div>;
+ 
   const regions=[...new Set(rows.map(r=>r.region).filter(Boolean))].sort();
-
-  function upsert(row){
-    setRows(prev=>{const i=prev.findIndex(r=>r.id===row.id);
-      const next=i>=0?prev.map(r=>r.id===row.id?row:r):[...prev,row];
-      saveRow(next,row);return next;});
-    setEditing(null);
+  const clients=[...new Set(rows.map(r=>r.client).filter(Boolean))].sort();
+ 
+  function upsert(row){setRows(prev=>{const i=prev.findIndex(r=>r.id===row.id);
+    const next=i>=0?prev.map(r=>r.id===row.id?row:r):[...prev,row];saveW(next,row);return next;});setEditing(null);}
+  function remove(w){if(!confirm("Delete "+w.wo+"? This can't be undone."))return;
+    setRows(prev=>{const next=prev.filter(r=>r.id!==w.id);delW(next,w.id);return next;});back();}
+  function setStatusOf(w,st){const row={...w,status:st};setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
+  function addLog(w,text){const entry={ts:new Date().toISOString(),text};
+    const row={...w,log:[...(w.log||[]),entry],lastContact:todayStr()};
+    setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
+  function quickLog(w){addLog(w,"Contact logged");}
+  function saveNotes(w,text){const row={...w,history:text};setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
+  function saveSub(sub){setSubs(prev=>{const i=prev.findIndex(s=>s.id===sub.id);
+    const next=i>=0?prev.map(s=>s.id===sub.id?sub:s):[...prev,sub];saveS(next,sub);return next;});
+    if(pendingSubTarget){pendingSubTarget.setF(p=>({...p,subId:sub.id}));setPendingSubTarget(null);}
+    setEditSub(null);}
+  function newSubFromWO(f,setF){setPendingSubTarget({setF});setEditSub(false);}
+ 
+  const cur=view.name==="detail"?rows.find(r=>r.id===view.id):null;
+  const curSub=view.name==="subdetail"?subs.find(s=>s.id===view.id):null;
+ 
+  const counts={past_due:0,due_soon:0,follow_up:0};
+  rows.forEach(w=>{if(w.status==="Complete")return;const k=statusFlag(w,cfg).key;if(counts[k]!=null)counts[k]++;});
+  const rushList=rows.filter(w=>w.rush&&w.status!=="Complete");
+ 
+  function filtered(){
+    let v=rows.filter(w=>{
+      if(w.status==="Complete")return false;
+      if(region&&w.region!==region)return false;
+      if(client&&w.client!==client)return false;
+      if(status&&w.status!==status)return false;
+      if(pri&&w.pri!==pri)return false;
+      if(flagFilter){if(flagFilter==="rush"){if(!(w.rush))return false;}else if(statusFlag(w,cfg).key!==flagFilter)return false;}
+      if(q){const s=q.toLowerCase();const sub=subs.find(x=>x.id===w.subId);
+        const hay=[w.wo,w.job,w.client,w.location,w.scope,w.contact,w.sub,sub&&sub.name].join(" ").toLowerCase();
+        if(!hay.includes(s))return false;}
+      return true;});
+    v.sort((a,b)=>{if(sort==="urgent"){const d=severity(a,cfg)-severity(b,cfg);if(d)return d;return (parseD(a.due)||8e15)-(parseD(b.due)||8e15);}
+      if(sort==="due")return (parseD(a.due)||8e15)-(parseD(b.due)||8e15);
+      if(sort==="pri")return (a.pri||"P9").localeCompare(b.pri||"P9");return 0;});
+    return v;
   }
-  function remove(w){
-    if(!confirm("Delete "+w.wo+"? This can't be undone."))return;
-    setRows(prev=>{const next=prev.filter(r=>r.id!==w.id);delRow(next,w.id);return next;});
-  }
-  function log(w){
-    const row={...w,lastContact:todayStr()};
-    setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveRow(next,row);return next;});
-  }
-
-  const counts={past_due:0,due_soon:0,rush:0,follow_up:0};
-  rows.forEach(w=>{const f=statusFlag(w,cfg).key;if(counts[f]!=null)counts[f]++;if(w.rush&&w.status!=="Complete")counts.rush++;});
-
-  let view=rows.filter(w=>{
-    if(region&&w.region!==region)return false;
-    if(status&&w.status!==status)return false;
-    if(flagFilter){if(flagFilter==="rush"){if(!(w.rush&&w.status!=="Complete"))return false;}
-      else if(statusFlag(w,cfg).key!==flagFilter)return false;}
-    if(q){const s=q.toLowerCase();const hay=[w.wo,w.job,w.client,w.location,w.scope,w.contact,w.sub].join(" ").toLowerCase();
-      if(!hay.includes(s))return false;}
-    return true;
-  });
-  view.sort((a,b)=>{
-    if(sort==="urgent"){const d=severity(a,cfg)-severity(b,cfg);if(d)return d;
-      return (parseD(a.due)||8e15)-(parseD(b.due)||8e15);}
-    if(sort==="due")return (parseD(a.due)||8e15)-(parseD(b.due)||8e15);
-    if(sort==="pri")return (a.pri||"P9").localeCompare(b.pri||"P9");
-    return 0;
-  });
-
-  const triage=[
-    {key:"past_due",label:"Past due",n:counts.past_due,c:"var(--pastdue)"},
-    {key:"rush",label:"Rush",n:counts.rush,c:"var(--rush)"},
-    {key:"due_soon",label:"Due soon",n:counts.due_soon,c:"var(--duesoon)"},
-    {key:"follow_up",label:"Follow up",n:counts.follow_up,c:"var(--followup)"}
-  ];
-
+ 
   function exportCSV(){
-    const cols=["wo","job","region","client","location","scope","sub","fm","contact","phone","nte","pri","rush","status","due","lastContact","next","history"];
+    const cols=["wo","job","region","client","location","scope","sub","fm","contact","phone","nte","budget","actual","pri","rush","status","due","lastContact","next","history"];
     const esc=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
     const csv=[cols.join(",")].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(","))).join("\n");
     dl(csv,"work_orders.csv","text/csv");
   }
-  function exportJSON(){dl(JSON.stringify(rows,null,2),"work_orders.json","application/json");}
-  function dl(text,name,type){const b=new Blob([text],{type});const u=URL.createObjectURL(b);
-    const a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
-
+  function exportJSON(){dl(JSON.stringify({work_orders:rows,subs},null,2),"work_orders_backup.json","application/json");}
+  function dl(t,n,ty){const b=new Blob([t],{type:ty}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);}
+ 
+  const isDetail=view.name==="detail"||view.name==="subdetail";
+  const triage=[{key:"past_due",label:"Past due",n:counts.past_due,c:"var(--pastdue)"},
+    {key:"rush",label:"Rush",n:rushList.length,c:"var(--rush)"},
+    {key:"due_soon",label:"Due soon",n:counts.due_soon,c:"var(--duesoon)"},
+    {key:"follow_up",label:"Follow up",n:counts.follow_up,c:"var(--followup)"}];
+ 
   return (
    <>
      <div className="top">
-       <h1><span className="dot"/>Work Order Board
-         <span className="mode">{sync?<>● <b>Synced</b></>:<>○ <b>Local</b></>}</span>
-       </h1>
-       <div className="triage">
-         <button className={"tcard clear"+(flagFilter?"":" ")} onClick={()=>setFlag("")}
-           style={flagFilter?{}:{outline:"2px solid rgba(255,255,255,.5)"}}>
-           <div className="n">{rows.filter(w=>w.status!=="Complete").length}</div><div className="l">All open</div></button>
-         {triage.map(t=>
-           <button key={t.key} className={"tcard"+(flagFilter&&flagFilter!==t.key?" off":"")}
-             style={{background:t.c}} onClick={()=>setFlag(flagFilter===t.key?"":t.key)}>
-             <div className="n">{t.n}</div><div className="l">{t.label}</div></button>)}
-       </div>
+       {isDetail
+        ? <button className="back" onClick={back}>{I.back} Back</button>
+        : <>
+          <h1><span className="bloom">✿</span> Work Order Board
+            <span className="mode">{sync?<>● <b>Synced</b></>:<>○ <b>Local</b></>}</span></h1>
+          <div className="tabs">
+            {[["board","Active"],["completed","Completed"],["subs","Subs"]].map(([k,l])=>
+              <button key={k} className={"tab"+(view.name===k?" on":"")} onClick={()=>root(k)}>{l}</button>)}
+          </div>
+          {view.name==="board"&&
+           <div className="triage">
+             <button className="tcard clear" onClick={()=>setFlag("")} style={flagFilter?{}:{outline:"2px solid rgba(255,255,255,.6)"}}>
+               <div className="n">{rows.filter(w=>w.status!=="Complete").length}</div><div className="l">All active</div></button>
+             {triage.map(t=><button key={t.key} className={"tcard"+(flagFilter&&flagFilter!==t.key?" off":"")} style={{background:t.c}} onClick={()=>setFlag(flagFilter===t.key?"":t.key)}>
+               <div className="n">{t.n}</div><div className="l">{t.label}</div></button>)}
+           </div>}
+        </>}
      </div>
-
-     <div className="controls">
-       <div className="searchrow">
+ 
+     {view.name==="board"&&<>
+       {rushList.length>0&&<div className="rushbox"><div className="inner">
+         <h3>RUSH work orders<span className="cnt">{rushList.length}</span></h3>
+         {rushList.map(w=>{const f=statusFlag(w,cfg);return (
+           <div key={w.id} className="rushline" onClick={()=>nav({name:"detail",id:w.id})}>
+             <span className="wo">{w.wo}</span>
+             <span className="lc">{w.location||w.scope}</span>
+             <span className="fl" style={{background:f.color}}>{f.label}</span></div>);})}
+       </div></div>}
+ 
+       <div className="controls">
          <div className="search">{I.search}<input placeholder="Search WO, client, site, sub…" value={q} onChange={e=>setQ(e.target.value)}/></div>
+         <div className="filters">
+           <div className="sel"><select value={sort} onChange={e=>setSort(e.target.value)}><option value="urgent">Most urgent</option><option value="due">By due date</option><option value="pri">By priority</option></select></div>
+           <div className="sel"><select value={client} onChange={e=>setClient(e.target.value)}><option value="">All clients</option>{clients.map(c=><option key={c}>{c}</option>)}</select></div>
+           <div className="sel"><select value={pri} onChange={e=>setPri(e.target.value)}><option value="">All priorities</option>{PRIS.filter(Boolean).map(p=><option key={p}>{p}</option>)}</select></div>
+           <div className="sel"><select value={region} onChange={e=>setRegion(e.target.value)}><option value="">All regions</option>{regions.map(r=><option key={r}>{r}</option>)}</select></div>
+           <div className="sel"><select value={status} onChange={e=>setStatus(e.target.value)}><option value="">All statuses</option>{STATUSES.filter(s=>s!=="Complete").map(s=><option key={s}>{s}</option>)}</select></div>
+         </div>
        </div>
-       <div className="filters">
-         <div className="sel"><select value={sort} onChange={e=>setSort(e.target.value)}>
-           <option value="urgent">Most urgent</option><option value="due">By due date</option><option value="pri">By priority</option></select></div>
-         <div className="sel"><select value={region} onChange={e=>setRegion(e.target.value)}>
-           <option value="">All regions</option>{regions.map(r=><option key={r}>{r}</option>)}</select></div>
-         <div className="sel"><select value={status} onChange={e=>setStatus(e.target.value)}>
-           <option value="">All statuses</option>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
+ 
+       <div className="list">
+         {filtered().length===0?<div className="empty"><h3>Nothing here</h3><p>No active work orders match these filters. Clear them, or add one with the + button.</p></div>
+          :filtered().map(w=><Card key={w.id} w={w} cfg={cfg} onOpen={x=>nav({name:"detail",id:x.id})} onLog={quickLog}/>)}
        </div>
-     </div>
-
-     <div className="list">
-       {view.length===0
-        ? <div className="empty"><h3>Nothing here</h3><p>No work orders match these filters. Clear them, or add one with the + button.</p></div>
-        : view.map(w=><Card key={w.id} w={w} cfg={cfg} onEdit={setEditing} onLog={log} onDelete={remove}/>)}
-     </div>
-
-     <div className="foot">
-       <button onClick={exportCSV}>Export CSV</button>
-       <button onClick={exportJSON}>Export JSON (backup)</button>
-       {!sync && <button onClick={()=>setShowSync(true)}>Turn on sync</button>}
-     </div>
-
-     <button className="fab" onClick={()=>setEditing(false)}>{I.plus} New</button>
-
-     {editing!==null && <EditSheet w={editing||null} onSave={upsert} onClose={()=>setEditing(null)}/>}
-     {showSync && <SyncSheet onClose={()=>setShowSync(false)}/>}
+ 
+       <div className="foot">
+         <button onClick={exportCSV}>Export CSV</button>
+         <button onClick={exportJSON}>Export backup</button>
+         {!sync&&<button onClick={()=>setShowSync(true)}>Turn on sync</button>}
+       </div>
+       <button className="fab" onClick={()=>setEditing(false)}>{I.plus} New</button>
+     </>}
+ 
+     {view.name==="completed"&&<div className="list">
+       {rows.filter(w=>w.status==="Complete").length===0?<div className="empty"><h3>No completed work orders yet</h3><p>When you mark a job complete, it moves here for your records and off the active board.</p></div>
+        :rows.filter(w=>w.status==="Complete").map(w=><Card key={w.id} w={w} cfg={cfg} onOpen={x=>nav({name:"detail",id:x.id})} onLog={quickLog}/>)}
+     </div>}
+ 
+     {view.name==="subs"&&<>
+       <div className="list">
+         {subs.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>{
+           const active=rows.filter(r=>r.subId===s.id&&r.status!=="Complete").length;
+           const c0=(s.contacts&&s.contacts[0])||{};
+           return <div key={s.id} className="subrow" onClick={()=>nav({name:"subdetail",id:s.id})}>
+             <div className="nm">{s.name}</div>
+             {s.trade&&<div className="tr">{s.trade}</div>}
+             <div className="ct">{c0.name?c0.name+(c0.phone?" · "+c0.phone:""):(c0.phone||"No contact info yet")} · {active} active job{active===1?"":"s"}</div>
+           </div>;})}
+       </div>
+       <button className="fab" onClick={()=>setEditSub(false)}>{I.plus} New sub</button>
+     </>}
+ 
+     {view.name==="detail"&&cur&&<WODetail key={cur.id} w={cur} subs={subs} cfg={cfg}
+        onEdit={setEditing} onDelete={remove}
+        onComplete={w=>{setStatusOf(w,"Complete");back();}}
+        onReopen={w=>setStatusOf(w,"Approved")}
+        onAddLog={addLog} onSaveNotes={saveNotes} openSub={id=>nav({name:"subdetail",id})}/>}
+ 
+     {view.name==="subdetail"&&curSub&&<SubDetail sub={curSub} rows={rows} cfg={cfg}
+        onEdit={setEditSub} openWO={id=>nav({name:"detail",id})}/>}
+ 
+     {editing!==null&&<EditSheet w={editing||null} subs={subs} onSave={upsert} onClose={()=>setEditing(null)} onNewSub={newSubFromWO}/>}
+     {editSub!==null&&<SubEditSheet sub={editSub||null} onSave={saveSub} onClose={()=>{setEditSub(null);setPendingSubTarget(null);}}/>}
+     {showSync&&<SyncSheet onClose={()=>setShowSync(false)}/>}
    </>
   );
 }
@@ -501,3 +773,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
+ 
