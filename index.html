@@ -16,7 +16,7 @@
   --line:#f6d9e6; --line2:#fcecf3; --tap:#e0348a; --tap2:#c21f70;
   /* status + flag colors — unchanged on purpose */
   --pastdue:#d92d20; --duesoon:#e8820c; --rush:#7c3aed; --followup:#c99700;
-  --motion:#0f9d6b; --done:#7c8a99; --ok:#9aa9b6;
+  --motion:#0f9d6b; --done:#7c8a99; --ok:#9aa9b6; --action:#2456d6;
   --over:#d92d20; --near:#e8820c; --under:#0f9d6b;
 }
 *{box-sizing:border-box}
@@ -27,7 +27,7 @@ body{padding-bottom:92px}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select,textarea{font-family:inherit;font-size:16px}
 a{color:inherit}
- 
+
 /* header */
 .top{position:sticky;top:0;z-index:30;color:#fff;
   background:linear-gradient(135deg,#c21f70 0%,#ec4f9d 60%,#f47cb8 100%);
@@ -38,21 +38,21 @@ a{color:inherit}
 .mode b{color:#fff}
 .back{display:inline-flex;align-items:center;gap:7px;font-family:'Quicksand';font-weight:600;font-size:16px;color:#fff}
 .back svg{width:20px;height:20px}
- 
+
 /* tabs */
 .tabs{display:flex;gap:4px;margin-top:13px;background:rgba(255,255,255,.16);padding:4px;border-radius:12px}
 .tab{flex:1;text-align:center;padding:8px 4px;border-radius:9px;font-family:'Quicksand';font-weight:700;font-size:13.5px;color:#ffe3f1}
 .tab.on{background:#fff;color:var(--tap2);box-shadow:0 1px 4px rgba(0,0,0,.12)}
- 
+
 /* triage */
-.triage{display:flex;gap:8px;margin-top:13px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.triage{display:flex;gap:8px;margin-top:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .tcard{flex:0 0 auto;min-width:78px;border-radius:13px;padding:9px 12px;text-align:left;color:#fff;transition:transform .08s,filter .12s}
 .tcard:active{transform:scale(.96)}
 .tcard.off{filter:grayscale(.5) brightness(.85);opacity:.72}
 .tcard .n{font-size:22px;font-weight:700;line-height:1;font-family:'IBM Plex Mono'}
 .tcard .l{font-size:10.5px;font-weight:600;margin-top:4px;opacity:.95}
 .tcard.clear{background:rgba(255,255,255,.2);color:#fff}
- 
+
 /* rush box */
 .rushbox{max-width:860px;margin:12px auto 0;padding:0 16px}
 .rushbox .inner{background:#fff;border:1.5px solid #e2d8f7;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(224,52,138,.08)}
@@ -64,7 +64,7 @@ a{color:inherit}
 .rushline .wo{font-family:'IBM Plex Mono';font-weight:600;font-size:13.5px}
 .rushline .lc{font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rushline .fl{font-size:10px;font-weight:700;color:#fff;padding:2px 7px;border-radius:5px}
- 
+
 /* controls */
 .controls{padding:12px 16px 4px;display:flex;flex-direction:column;gap:9px;max-width:860px;margin:0 auto}
 .search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px}
@@ -74,7 +74,7 @@ a{color:inherit}
 .sel{position:relative;flex:0 0 auto}
 .sel select{appearance:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;height:38px;padding:0 30px 0 12px;font-size:13px;font-weight:600;color:var(--ink);outline:none}
 .sel::after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:translateY(-70%) rotate(45deg);pointer-events:none}
- 
+
 /* list + cards */
 .list{padding:10px 16px 20px;display:flex;flex-direction:column;gap:11px;max-width:860px;margin:0 auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;display:flex;box-shadow:0 2px 8px rgba(194,31,112,.06)}
@@ -101,7 +101,7 @@ a{color:inherit}
 .act.log{border-color:#f4cbe0;color:var(--tap2);background:#fdeef6}
 .act svg{width:15px;height:15px}
 .tapopen{cursor:pointer}
- 
+
 /* detail */
 .detail{max-width:760px;margin:0 auto;padding:14px 16px 30px}
 .dhead{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(194,31,112,.06)}
@@ -116,14 +116,14 @@ a{color:inherit}
 .kv dt{color:var(--faint);font-weight:600}
 .kv dd{margin:0}
 .sublink{color:var(--tap);font-weight:700;text-decoration:underline;text-underline-offset:2px}
- 
+
 /* budget bar */
 .bbar{height:12px;border-radius:8px;background:var(--line2);overflow:hidden;margin:4px 0 8px}
 .bbar span{display:block;height:100%;border-radius:8px}
 .bnums{display:flex;justify-content:space-between;font-size:13px}
 .bnums b{font-family:'IBM Plex Mono';font-weight:600}
 .bwarn{margin-top:8px;font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px}
- 
+
 /* log */
 .logadd{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .logadd textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:56px;resize:vertical;outline:none;line-height:1.4}
@@ -135,7 +135,7 @@ a{color:inherit}
 .logentry .tx{font-size:13.5px;margin-top:3px;line-height:1.45;white-space:pre-wrap}
 .logentry.legacy .ts{color:var(--faint)}
 .hist{font-size:13px;color:var(--muted);line-height:1.55;white-space:pre-wrap}
- 
+
 /* subs */
 .subrow{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:0 2px 8px rgba(194,31,112,.05)}
 .subrow:active{background:var(--line2)}
@@ -147,22 +147,22 @@ a{color:inherit}
 .jobmini .fl{font-size:9.5px;font-weight:700;color:#fff;padding:2px 6px;border-radius:5px}
 .jobmini .wo{font-family:'IBM Plex Mono';font-weight:600}
 .jobmini .loc{color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
- 
+
 .rowbtns{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
 .btn{padding:10px 16px;border-radius:11px;font-weight:700;font-size:13.5px}
 .btn.pri{background:var(--tap);color:#fff}
 .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--muted)}
 .btn.done{background:#e7f7f0;border:1px solid #bfe6d5;color:#0b7a53}
 .btn.del{background:#fff;border:1px solid #f3c9c6;color:var(--pastdue)}
- 
+
 .empty{max-width:760px;margin:44px auto;text-align:center;color:var(--muted);padding:0 24px}
 .empty h3{color:var(--ink);font-size:16px;margin:0 0 6px;font-family:'Quicksand'}
- 
+
 .fab{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom) + 18px);z-index:40;height:56px;padding:0 22px 0 18px;border-radius:18px;background:var(--tap);color:#fff;font-weight:700;font-size:15px;font-family:'Quicksand';display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(224,52,138,.42)}
 .fab:active{transform:translateY(1px)}
 .foot{max-width:760px;margin:6px auto 30px;padding:0 16px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 .foot button{font-size:12px;font-weight:600;color:var(--faint)}
- 
+
 /* modal */
 .scrim{position:fixed;inset:0;background:rgba(61,36,48,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:640px){.scrim{align-items:center}}
@@ -197,18 +197,44 @@ a{color:inherit}
 .contactcard:first-of-type{border-top:none;padding-top:0}
 .contactcard .cn{font-weight:600;font-size:14px}
 .contactcard .cd{font-size:13px;color:var(--muted);margin-top:2px}
+.jobno{font-size:12px;color:var(--faint);font-weight:500;font-family:'IBM Plex Mono'}
+.wowrap{text-align:right}
+.actionpick{margin-top:12px;display:flex;align-items:center;gap:10px}
+.actionpick label{font-size:12px;font-weight:700;color:var(--action)}
+.actionpick select{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:9px;height:40px;padding:0 10px;font-size:13.5px;font-weight:600;color:var(--action);outline:none}
+.actionpick select:focus{border-color:var(--action);box-shadow:0 0 0 3px rgba(36,86,214,.12)}
+.suggest{background:#eef3fe;border:1px solid #cdddfb;color:var(--action);font-size:13px;font-weight:600;padding:9px 11px;border-radius:10px;margin-bottom:12px;cursor:pointer}
+.suggest b{text-transform:capitalize}
+.bid{border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:10px;background:#fff}
+.bidhead{display:flex;align-items:center;gap:8px}
+.bidname{font-weight:700;font-size:14px}
+.chosentag{font-size:11px;font-weight:700;color:#fff;background:var(--motion);padding:2px 8px;border-radius:6px}
+.biddrop{color:var(--faint);font-size:16px;padding:2px 7px;margin-left:auto}
+.bidctl{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.bidctl .sel select{height:36px}
+.bidcall{height:36px}
+.bidchoose{height:36px;padding:0 14px;border-radius:9px;background:var(--tap);color:#fff;font-weight:700;font-size:12.5px}
+.bidnote{width:100%;margin-top:9px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:13px;color:var(--ink);outline:none}
+.bidnote:focus{border-color:var(--tap);box-shadow:0 0 0 3px rgba(224,52,138,.1)}
+.chosenmini{color:#e0348a;font-size:14px;margin-left:auto}
+.bidmini{font-size:11px;color:var(--muted);background:var(--line2);padding:2px 7px;border-radius:5px;margin-left:auto}
+.emptyheart{font-size:46px;color:#f4a9c9;line-height:1;margin-bottom:8px}
+.trlabel{font-size:9.5px;font-weight:700;letter-spacing:.7px;color:#ffd4ea;text-transform:uppercase;margin:12px 2px 0}
+.trlabel:first-of-type{margin-top:13px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-/* ---- Supabase sync (optional). Blank = local mode. See README. ---- */
+/* ---- Supabase sync (optional). Blank = local mode.
+   Paste your Project URL + your PUBLISHABLE key (sb_publishable_...) below,
+   or the legacy "anon" key if your project shows that instead. See README. ---- */
 window.SUPABASE_URL = "";
 window.SUPABASE_ANON_KEY = "";
 </script>
 <script type="text/babel" data-presets="react">
 const {useState,useEffect,useRef} = React;
- 
+
 /* ---------------- subs seed ---------------- */
 const SUB_SEED=[
  {id:"s_diamond",name:"Diamond Painting",trade:"Painting / laminate / millwork",contacts:[{name:"Moises",phone:"",email:""}],address:"",notes:"Primary FL vendor. Fabricates desks. Handles FOH/BOH laminate."},
@@ -219,27 +245,31 @@ const SUB_SEED=[
  {id:"s_shaw",name:"Shaw",trade:"Flooring / carpet (material)",contacts:[{name:"",phone:"",email:""}],address:"",notes:"Carpet tile supplier."},
  {id:"s_mccann",name:"McCann Handyman Services",trade:"Handyman",contacts:[{name:"",phone:"",email:""}],address:"",notes:"Asked to reduce pricing 9/1."}
 ];
- 
+
 /* ---------------- work order seed ---------------- */
-const mk=(o)=>{const b={budget:"",actual:"",subId:"",...o};b.log=o.history?[{ts:"",text:o.history,legacy:true}]:[];return b;};
+const mk=(o)=>{const b={action:"",bids:[],budget:"",actual:"",subId:"",...o};b.log=o.history?[{ts:"",text:o.history,legacy:true}]:[];return b;};
 const SEED=[
  mk({wo:"200-2529",job:"52572",region:"IL",client:"",location:"9700 S 13th St, Oak Creek, WI (MKE2)",scope:"Flush valves and faucets",subId:"s_burim",sub:"Burim",fm:"",contact:"Debbie",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-06-04",lastContact:"2026-08-13",next:"Follow up with Debbie on the award — survey invoice sent 6/26, still no award.",history:"Quoted 6/5 (faucet price estimated). Burim survey invoice emailed to Debbie 6/26. Waiting on award 8/13."}),
- mk({wo:"0231-888",job:"52839",region:"FL-West",client:"CBRE - AT&T",location:"1332 N John Young Pkwy, Kissimmee, FL 34741",scope:"Laminate repair FOH & BOH — check ALL laminate on site, add any extra areas to the quote",subId:"s_diamond",sub:"Wood Craft (Sonia) / Diamond Painting",fm:"Maria McArdle",contact:"Jay Rios",phone:"407-456-0758",nte:"$350",budget:"350",pri:"P4",rush:false,status:"Awaiting Sub Quote",due:"2026-07-02",lastContact:"2026-09-01",next:"Get BOH quote from Diamond Painting; reconcile with Wood Craft/Max Ewy quote, then submit.",history:"Arrive-by 6/27 1PM. Wood Craft (Sonia)-Max Ewy quote received 7/22. Diamond FOH received, need answers + BOH quote (8/10). Moises resurveyed 8/13. Cheyli working 9/1."}),
- mk({wo:"0205-1000",job:"51960",region:"FL-West",client:"CBRE - AT&T",location:"2351 E Fowler Ave, Tampa, FL 33609",scope:"Touch up/refinish laminate (FOH) — 2 community tables on salesfloor lifting. Pics requested",subId:"s_diamond",sub:"Diamond Painting / McCann / handymen",fm:"Maria McArdle",contact:"Melissa Macaluso",phone:"727-255-4936",nte:"$350",budget:"350",pri:"P5",rush:false,status:"Approved",due:"2026-06-06",lastContact:"2026-09-01",next:"Lock in a handyman: waiting on McCann price cut; compare High Quality Handyman + Tampa Handy Pro, then schedule.",history:"Arrive-by 5/29 5:30PM. APPROVED 6/3. Material left for Mike & Yianni. Dispatched Diamond Painting 7/30. Asked McCann to reduce price 9/1. Emailed High Quality Handyman & Tampa Handy Pro 9/1. Cheyli working 9/1."}),
+ mk({wo:"0231-888",job:"52839",action:"pricing needed",bids:[{subId:"s_woodcraft",status:"quoted",note:"Max Ewy quote received 7/22"},{subId:"s_diamond",status:"reached out",note:"Need BOH quote"}],region:"FL-West",client:"CBRE - AT&T",location:"1332 N John Young Pkwy, Kissimmee, FL 34741",scope:"Laminate repair FOH & BOH — check ALL laminate on site, add any extra areas to the quote",subId:"s_diamond",sub:"Wood Craft (Sonia) / Diamond Painting",fm:"Maria McArdle",contact:"Jay Rios",phone:"407-456-0758",nte:"$350",budget:"350",pri:"P4",rush:false,status:"Awaiting Sub Quote",due:"2026-07-02",lastContact:"2026-09-01",next:"Get BOH quote from Diamond Painting; reconcile with Wood Craft/Max Ewy quote, then submit.",history:"Arrive-by 6/27 1PM. Wood Craft (Sonia)-Max Ewy quote received 7/22. Diamond FOH received, need answers + BOH quote (8/10). Moises resurveyed 8/13. Cheyli working 9/1."}),
+ mk({wo:"0205-1000",job:"51960",action:"looking for sub",bids:[{subId:"s_mccann",status:"quoted",note:"Asked to reduce price 9/1"},{subId:"s_diamond",status:"reached out",note:"Dispatched 7/30"}],region:"FL-West",client:"CBRE - AT&T",location:"2351 E Fowler Ave, Tampa, FL 33609",scope:"Touch up/refinish laminate (FOH) — 2 community tables on salesfloor lifting. Pics requested",subId:"s_diamond",sub:"Diamond Painting / McCann / handymen",fm:"Maria McArdle",contact:"Melissa Macaluso",phone:"727-255-4936",nte:"$350",budget:"350",pri:"P5",rush:false,status:"Approved",due:"2026-06-06",lastContact:"2026-09-01",next:"Lock in a handyman: waiting on McCann price cut; compare High Quality Handyman + Tampa Handy Pro, then schedule.",history:"Arrive-by 5/29 5:30PM. APPROVED 6/3. Material left for Mike & Yianni. Dispatched Diamond Painting 7/30. Asked McCann to reduce price 9/1. Emailed High Quality Handyman & Tampa Handy Pro 9/1. Cheyli working 9/1."}),
  mk({wo:"2011-1147.04",job:"50363",region:"FL-East",client:"",location:"7703 W Flagler St, Miami",scope:"(scope not captured yet)",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"New",due:"",lastContact:"",next:"Pull this WO in MHelpDesk — no scope, sub, or status captured. Find out where it stands.",history:"Listed with no detail in Sarah's notes. Needs full lookup."}),
  mk({wo:"2011-1147.06",job:"52362",region:"FL-East",client:"",location:"Miami area",scope:"Replace HVAC unit PAC-03 + install new duct detector",subId:"s_dynafire",sub:"Dyna Fire (Isaac & Bruce)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"",lastContact:"2026-09-01",next:"Get update on the 8/11 inspection (4th) and confirm the duct detector is on the return, not the supply.",history:"APPROVED 1/27. Smoke issue - detector needed on return not supply (3/20). Twin Island Refrigeration, then Brophy Air (Gabriel Rodriguez), then Dyna Fire. APPROVED again 6/1. Scheduled 8/11 for a 4th inspection - need update (8/20; 9/1)."}),
  mk({wo:"200-2450",job:"51842",region:"FL/Amazon",client:"Amazon",location:"2600 N Normandy Blvd, Deltona (MCO2)",scope:"Desk remodel",subId:"s_diamond",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:true,status:"Quote Submitted",due:"2026-04-24",lastContact:"2026-06-23",next:"Badly overdue and silent since June. Chase the award in FairMarkit / escalate.",history:"Quoted 5/15 (material was a rough guess). Checked FairMarkit 6/4. Waiting for award 6/23."}),
  mk({wo:"200-2547",job:"52658",region:"FL/Amazon",client:"Amazon",location:"2501 Normandy Blvd, Deltona (QZZ1)",scope:"Desk work + electrical + security system",subId:"s_diamond",sub:"Diamond Painting (Moises)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"In Progress",due:"2026-06-11",lastContact:"2026-08-20",next:"Confirm remaining work is done. Dust containment (opaque tarps, 4 sides + roof), electric saw only, electrical afterhours, to code.",history:"Quoted 6/12 FairMarkit - Diamond fabricating desk. APPROVED 7/16. Scheduled 8/3-8/6, still more work 8/20."}),
  mk({wo:"113436-02",job:"53453",region:"NY-North",client:"Amazon",location:"4201 Walden Ave, Lancaster (BUF5)",scope:"Quote for painting",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Scheduled",due:"2026-08-14",lastContact:"2026-09-02",next:"Confirm the 9/2 painting happened and close it out.",history:"Scheduled 9/2."}),
  mk({wo:"114028-02 RFE",job:"53240",region:"NY-North",client:"Amazon",location:"BUF9",scope:"Hang TVs + relocate projector screen",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"",lastContact:"2026-07-28",next:"Follow up on the award — silent since late July.",history:"Quoted 7/28 - noted use of lift and travel hours."}),
- mk({wo:"1852-517.02",job:"53781",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace ceiling tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-10",lastContact:"",next:"Get it scheduled before the 9/10 due date.",history:"Scheduled: ???"}),
- mk({wo:"1852-515",job:"53706",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace carpet tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-09",lastContact:"",next:"Schedule for ~9/7 alongside the WV carpet job, once Shaw carpet arrives.",history:"Scheduled: ??? (aim 9/7 with the WV job once Shaw carpet comes in)."}),
+ mk({wo:"1852-517.02",job:"53781",action:"waiting to be scheduled",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace ceiling tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-10",lastContact:"",next:"Get it scheduled before the 9/10 due date.",history:"Scheduled: ???"}),
+ mk({wo:"1852-515",job:"53706",action:"materials needed",region:"PA-West",client:"CBRE - AT&T",location:"4030 William Penn Hwy, Monroeville, PA",scope:"Replace carpet tiles",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Survey Needed",due:"2026-09-09",lastContact:"",next:"Schedule for ~9/7 alongside the WV carpet job, once Shaw carpet arrives.",history:"Scheduled: ??? (aim 9/7 with the WV job once Shaw carpet comes in)."}),
  mk({wo:"200-2650",job:"53666",region:"PA-West",client:"Amazon",location:"165 Gleen Gox Rd, New Stanton, PA",scope:"Install 221 wheel stops + paint them",subId:"s_curbo",sub:"Curbo",fm:"",contact:"Luke",phone:"",nte:"",pri:"",rush:false,status:"Quote Submitted",due:"2026-08-26",lastContact:"2026-08-26",next:"Follow up on the Curbo quote award (they estimate 4-5 days).",history:"Curbo estimate 4-5 days, verbal over phone w/ Luke. Quoted 8/26."}),
- mk({wo:"2426-260",job:"53520 / 53715",region:"WV",client:"CBRE - AT&T",location:"9909 Mall Road, Morgantown, WV",scope:"Replace carpet tiles",subId:"s_shaw",sub:"Shaw (material)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Parts Ordered",due:"2026-08-25",lastContact:"2026-08-31",next:"Track the Shaw carpet (FedEx 876575752601), then schedule install ~9/7 with the PA carpet job.",history:"APPROVED 8/31. Placed carpet order with Shaw 8/31. FedEx tracking # 876575752601."})
+ mk({wo:"2426-260",job:"53520 / 53715",action:"materials needed",region:"WV",client:"CBRE - AT&T",location:"9909 Mall Road, Morgantown, WV",scope:"Replace carpet tiles",subId:"s_shaw",sub:"Shaw (material)",fm:"",contact:"",phone:"",nte:"",pri:"",rush:false,status:"Parts Ordered",due:"2026-08-25",lastContact:"2026-08-31",next:"Track the Shaw carpet (FedEx 876575752601), then schedule install ~9/7 with the PA carpet job.",history:"APPROVED 8/31. Placed carpet order with Shaw 8/31. FedEx tracking # 876575752601."})
 ];
 const STATUSES=["New","Needs Sub","Survey Needed","Awaiting Sub Quote","Quote Submitted","Approved","Parts Ordered","Scheduled","In Progress","Complete"];
 const PRIS=["","P1","P2","P3","P4","P5"];
- 
+const ACTIONS=["looking for sub","quote needed","pricing needed","waiting for sub invoice","needs to be dispatched","waiting to be scheduled","second visit needed","materials needed","signature needed"];
+const BIDSTATUS=["reached out","quoted","no response","not chosen"];
+function suggestAction(w){if(w.subId)return "";const bids=w.bids||[];if(bids.length===0)return "looking for sub";if(bids.some(b=>b.status==="quoted"))return "pricing needed";return "quote needed";}
+function actLabel(a){return a?a.charAt(0).toUpperCase()+a.slice(1):a;}
+
 /* ---------------- flags (unchanged logic) ---------------- */
 const FLAG={
  past_due:{key:"past_due",label:"PAST DUE",color:"var(--pastdue)"},
@@ -287,7 +317,7 @@ function todayStr(){const t=today();return t.getFullYear()+"-"+String(t.getMonth
 function fmtDT(iso){const d=new Date(iso);if(isNaN(d))return iso;
   return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
- 
+
 /* ---------------- storage ---------------- */
 const WKEY="wo_board_v3", SKEY="wo_subs_v3", CKEY="wo_cfg_v2";
 let memW=null,memS=null;
@@ -323,7 +353,7 @@ function persistS(s){memS=s;lSet(SKEY,JSON.stringify(s));}
 async function saveW(rows,row){persistW(rows);if(sync&&sb)try{await sb.from("work_orders").upsert(row);}catch(e){}}
 async function delW(rows,id){persistW(rows);if(sync&&sb)try{await sb.from("work_orders").delete().eq("id",id);}catch(e){}}
 async function saveS(subs,sub){persistS(subs);if(sync&&sb)try{await sb.from("subs").upsert(sub);}catch(e){}}
- 
+
 /* ---------------- icons ---------------- */
 const I={
  search:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>,
@@ -333,7 +363,7 @@ const I={
  plus:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6"><path d="M12 5v14M5 12h14"/></svg>,
  back:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M15 18l-6-6 6-6"/></svg>
 };
- 
+
 /* ---------------- work order card ---------------- */
 function Card({w,cfg,onOpen,onLog}){
   const f=statusFlag(w,cfg), dq=daysQuiet(w), bs=budgetState(w), late=f.key==="past_due";
@@ -343,11 +373,12 @@ function Card({w,cfg,onOpen,onLog}){
      <div className="cbody tapopen" onClick={()=>onOpen(w)}>
        <div className="r1">
          <span className="chip" style={{background:f.color}}>{f.label}{f.extra?" · "+f.extra:""}</span>
-         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>RUSH</span>}
+         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>★ RUSH</span>}
+         {w.action&&<span className="chip" style={{background:"var(--action)"}}>{w.action.toUpperCase()}</span>}
          {w.pri&&<span className="pill">{w.pri}</span>}
          {bs&&bs.key!=="under"&&<span className="budgetbadge" style={{background:bs.color}}>{bs.key==="over"?"OVER $":Math.round(bs.pct*100)+"% $"}</span>}
          <span className="spacer"/>
-         <span className="wo mono">{w.wo}</span>
+         <span className="wowrap"><span className="wo mono">{w.wo}</span>{w.job&&<span className="jobno mono"> · {w.job}</span>}</span>
        </div>
        <div className="r2"><span className="loc">{w.location||"—"}</span>{w.client?" · "+w.client:""}</div>
        {w.scope&&<div className="scope">{w.scope}</div>}
@@ -368,33 +399,62 @@ function Card({w,cfg,onOpen,onLog}){
    </div>
   );
 }
- 
+
 /* ---------------- work order detail ---------------- */
-function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSaveNotes,openSub}){
+function BidRow({bid,sub,chosen,onStatus,onNote,onChoose,onDrop,openSub}){
+  const [note,setNote]=useState(bid.note||"");
+  const phone=((sub&&(sub.contacts||[]).find(c=>c.phone))||{}).phone;
+  return (
+   <div className="bid">
+     <div className="bidhead">
+       <span className="bidname sublink" onClick={()=>sub&&openSub(sub.id)}>{sub?sub.name:"(sub removed)"}</span>
+       {chosen&&<span className="chosentag">★ Chosen</span>}
+       <button className="biddrop" title="Drop from this job" onClick={onDrop}>✕</button>
+     </div>
+     <div className="bidctl">
+       <div className="sel"><select value={bid.status} onChange={e=>onStatus(e.target.value)}>{BIDSTATUS.map(st=><option key={st} value={st}>{st}</option>)}</select></div>
+       {phone&&<a className="act call bidcall" href={"tel:"+phone.replace(/[^0-9+]/g,"")}>{I.phone} Call</a>}
+       {!chosen&&<button className="bidchoose" onClick={onChoose}>Choose</button>}
+     </div>
+     <input className="bidnote" value={note} onChange={e=>setNote(e.target.value)} onBlur={()=>onNote(note)} placeholder="Quote / note — e.g. $420, starts Mon"/>
+   </div>
+  );
+}
+
+function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSaveNotes,onSetAction,onAddBid,onSetBidStatus,onSetBidNote,onChooseBid,onDropBid,onNewBidSub,openSub}){
   const [draft,setDraft]=useState("");
   const [notes,setNotes]=useState(w.history||"");
   const f=statusFlag(w,cfg), bs=budgetState(w);
   const sub=subs.find(s=>s.id===w.subId);
   const log=[...(w.log||[])].sort((a,b)=>b.ts.localeCompare(a.ts));
+  const bids=w.bids||[];
+  const suggestion=suggestAction(w);
   return (
    <div className="detail">
      <div className="dhead">
        <div className="top1">
          <span className="chip" style={{background:f.color}}>{f.label}{f.extra?" · "+f.extra:""}</span>
-         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>RUSH</span>}
+         {w.rush&&f.key!=="done"&&<span className="chip" style={{background:"var(--rush)"}}>★ RUSH</span>}
+         {w.action&&<span className="chip" style={{background:"var(--action)"}}>{w.action.toUpperCase()}</span>}
          {w.pri&&<span className="pill">{w.pri}</span>}
          <span className="pill">{w.status}</span>
        </div>
        <h2 className="mono">{w.wo}</h2>
        <div className="loc">{w.location||"—"}{w.client?" · "+w.client:""}</div>
        {w.scope&&<div className="dscope">{w.scope}</div>}
+       <div className="actionpick">
+         <label>Action needed</label>
+         <select value={w.action||""} onChange={e=>onSetAction(w,e.target.value)}>
+           <option value="">— none —</option>{ACTIONS.map(a=><option key={a} value={a}>{a}</option>)}
+         </select>
+       </div>
        <div className="acts" style={{marginTop:13}}>
          {w.phone&&<a className="act call" href={"tel:"+w.phone.replace(/[^0-9+]/g,"")}>{I.phone} Call {w.contact||""}</a>}
          <button className="act log" onClick={()=>onAddLog(w,"Contact logged")}>{I.check} Log contact</button>
          <button className="act" onClick={()=>onEdit(w)}>{I.edit} Edit</button>
        </div>
      </div>
- 
+
      <div className="sec">
        <h4>Details</h4>
        <dl className="kv">
@@ -408,7 +468,25 @@ function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSav
          {w.lastContact&&<><dt>Last contact</dt><dd>{fmtDate(w.lastContact)}</dd></>}
        </dl>
      </div>
- 
+
+     <div className="sec">
+       <h4>Sourcing / bids <span className="r">{bids.length}</span></h4>
+       {suggestion&&suggestion!==w.action&&
+         <div className="suggest" onClick={()=>onSetAction(w,suggestion)}>Suggested action: <b>{suggestion}</b> — tap to set</div>}
+       <div className="picker" style={{marginBottom:11}}>
+         <select value="" onChange={e=>{if(e.target.value){onAddBid(w,e.target.value);e.target.value="";}}}>
+           <option value="">+ Add a sub to this job…</option>
+           {subs.filter(x=>!bids.some(b=>b.subId===x.id)).map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
+         </select>
+         <button onClick={()=>onNewBidSub(w)}>+ New</button>
+       </div>
+       {bids.length===0
+        ?<div style={{fontSize:13,color:"var(--faint)"}}>No subs sourced yet. Add the ones you are reaching out to for this job.</div>
+        :bids.map(b=><BidRow key={b.subId} bid={b} sub={subs.find(x=>x.id===b.subId)} chosen={w.subId===b.subId}
+            onStatus={v=>onSetBidStatus(w,b.subId,v)} onNote={v=>onSetBidNote(w,b.subId,v)}
+            onChoose={()=>onChooseBid(w,b.subId)} onDrop={()=>onDropBid(w,b.subId)} openSub={openSub}/>)}
+     </div>
+
      {(w.budget||w.actual||bs)&&
       <div className="sec">
        <h4>Budget</h4>
@@ -418,7 +496,7 @@ function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSav
          {bs.msg&&<div className="bwarn" style={{background:bs.key==="over"?"#fdeceb":"#fdf3e8",color:bs.color}}>{bs.msg}</div>}
        </>:<div style={{fontSize:13,color:"var(--muted)"}}>Set a budget and actual in Edit to track the cap.</div>}
       </div>}
- 
+
      <div className="sec">
        <h4>Update log <span className="r">{log.length} {log.length===1?"entry":"entries"}</span></h4>
        <div className="logadd">
@@ -430,13 +508,13 @@ function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSav
             <div className="ts">{e.legacy?"Imported from notes":fmtDT(e.ts)}</div>
             <div className="tx">{e.text}</div></div>)}
      </div>
- 
+
      <div className="sec">
        <h4>Notes <span className="r">freeform · not logged</span></h4>
        <textarea className="noteedit" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Freeform notes for this order — edit anytime. Not timestamped."/>
        {notes!==(w.history||"")&&<button className="btn pri" style={{marginTop:9}} onClick={()=>onSaveNotes(w,notes)}>Save note</button>}
      </div>
- 
+
      <div className="rowbtns">
        {w.status!=="Complete"
         ? <button className="btn done" onClick={()=>onComplete(w)}>Mark complete</button>
@@ -446,18 +524,19 @@ function WODetail({w,subs,cfg,onEdit,onDelete,onComplete,onReopen,onAddLog,onSav
    </div>
   );
 }
- 
+
 /* ---------------- sub detail ---------------- */
 function SubDetail({sub,rows,cfg,onEdit,openWO}){
-  const jobs=rows.filter(r=>r.subId===sub.id);
+  const jobs=rows.filter(r=>r.subId===sub.id||(r.bids||[]).some(b=>b.subId===sub.id));
   const active=jobs.filter(j=>j.status!=="Complete"), done=jobs.filter(j=>j.status==="Complete");
   const contacts=(sub.contacts||[]).filter(c=>c&&(c.name||c.phone||c.email));
   const primary=contacts.find(c=>c.phone);
-  const JobLine=({j})=>{const f=statusFlag(j,cfg);return (
+  const JobLine=({j})=>{const f=statusFlag(j,cfg);const chosen=j.subId===sub.id;const bid=(j.bids||[]).find(b=>b.subId===sub.id);return (
     <div className="jobmini" onClick={()=>openWO(j.id)}>
       <span className="fl" style={{background:f.color}}>{f.label}</span>
       <span className="wo mono">{j.wo}</span>
-      <span className="loc">{j.location}</span></div>);};
+      <span className="loc">{j.location}</span>
+      {chosen?<span className="chosenmini" title="Chosen">★</span>:bid&&<span className="bidmini">{bid.status}</span>}</div>);};
   return (
    <div className="detail">
      <div className="dhead">
@@ -494,10 +573,10 @@ function SubDetail({sub,rows,cfg,onEdit,openWO}){
    </div>
   );
 }
- 
+
 /* ---------------- edit sheets ---------------- */
 function EditSheet({w,subs,onSave,onClose,onNewSub}){
-  const blank={id:uid(),wo:"",job:"",region:"",client:"",location:"",scope:"",subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",budget:"",actual:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:"",log:[]};
+  const blank={id:uid(),wo:"",job:"",region:"",client:"",location:"",scope:"",action:"",bids:[],subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",budget:"",actual:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:"",log:[]};
   const [f,setF]=useState(w?{...w}:blank);
   const set=k=>e=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
   const isNew=!w;
@@ -512,11 +591,12 @@ function EditSheet({w,subs,onSave,onClose,onNewSub}){
          </div>
          <div className="fg"><label>Location</label><input value={f.location} onChange={set("location")}/></div>
          <div className="fg"><label>Scope of work</label><textarea value={f.scope} onChange={set("scope")}/></div>
+         <div className="fg"><label>Action needed <span style={{color:"var(--action)",fontWeight:700}}>· shows in the bar</span></label><select value={f.action||""} onChange={set("action")}><option value="">— none —</option>{ACTIONS.map(a=><option key={a} value={a}>{a}</option>)}</select></div>
          <div className="two">
            <div className="fg"><label>Client</label><input value={f.client} onChange={set("client")} placeholder="CBRE - AT&T"/></div>
            <div className="fg"><label>Region</label><input value={f.region} onChange={set("region")}/></div>
          </div>
-         <div className="fg"><label>Sub / vendor</label>
+         <div className="fg"><label>Chosen sub</label>
            <div className="picker">
              <select value={f.subId} onChange={set("subId")}>
                <option value="">— none —</option>
@@ -552,7 +632,7 @@ function EditSheet({w,subs,onSave,onClose,onNewSub}){
    </div>
   );
 }
- 
+
 function SubEditSheet({sub,onSave,onClose}){
   const base=sub?{...sub}:{id:uid(),name:"",trade:"",contacts:[],address:"",notes:""};
   const pad=[0,1,2].map(i=>(base.contacts&&base.contacts[i])?{...base.contacts[i]}:{name:"",phone:"",email:""});
@@ -583,7 +663,7 @@ function SubEditSheet({sub,onSave,onClose}){
    </div>
   );
 }
- 
+
 function SyncSheet({onClose}){
   return (
    <div className="scrim" onClick={onClose}>
@@ -591,13 +671,13 @@ function SyncSheet({onClose}){
        <header><h2>Turn on phone ↔ computer sync</h2><button className="x" onClick={onClose}>✕</button></header>
        <div className="form">
          <div className="syncbox">Right now your board saves to <b>this device only</b>. To sync across devices, connect a free Supabase database — about 15 minutes, one time. Full steps (including the two tables you need) are in the README.</div>
-         <div className="syncbox"><b>1.</b> Make a free project at <b>supabase.com</b>.<br/><b>2.</b> Run the two <code>create table</code> blocks from the README in the SQL editor (work_orders + subs).<br/><b>3.</b> Paste your Project URL + anon key into the top of <code>index.html</code> and redeploy.</div>
+         <div className="syncbox"><b>1.</b> Make a free project at <b>supabase.com</b>.<br/><b>2.</b> Run the two <code>create table</code> blocks from the README in the SQL editor (work_orders + subs).<br/><b>3.</b> Paste your Project URL + publishable key into the top of <code>index.html</code> and redeploy.</div>
        </div>
      </div>
    </div>
   );
 }
- 
+
 /* ---------------- app ---------------- */
 function App(){
   const [rows,setRows]=useState(null);
@@ -607,7 +687,7 @@ function App(){
   const nav=v=>setStack(s=>[...s,v]);
   const back=()=>setStack(s=>s.length>1?s.slice(0,-1):s);
   const root=name=>setStack([{name}]);
- 
+
   const [q,setQ]=useState(""),[region,setRegion]=useState(""),[client,setClient]=useState(""),
         [status,setStatus]=useState(""),[pri,setPri]=useState(""),[flagFilter,setFlag]=useState(""),[sort,setSort]=useState("urgent");
   const [editing,setEditing]=useState(null);
@@ -615,14 +695,14 @@ function App(){
   const [pendingSubTarget,setPendingSubTarget]=useState(null);
   const [showSync,setShowSync]=useState(false);
   const [cfg]=useState(()=>{const r=lGet(CKEY);return r?safe(r):{followUp:7,dueSoon:10};});
- 
+
   useEffect(()=>{initStore().then(d=>{setRows(d.rows);setSubs(d.subs);});},[]);
- 
-  if(!rows||!subs)return <div style={{padding:44,textAlign:"center",color:"var(--muted)",fontFamily:"Quicksand"}}>Loading your board…</div>;
- 
+
+  if(!rows||!subs)return <div style={{padding:44,textAlign:"center",color:"var(--muted)",fontFamily:"Quicksand"}}>Loading your board… <span style={{color:"#ffb3d1"}}>♥</span></div>;
+
   const regions=[...new Set(rows.map(r=>r.region).filter(Boolean))].sort();
   const clients=[...new Set(rows.map(r=>r.client).filter(Boolean))].sort();
- 
+
   function upsert(row){setRows(prev=>{const i=prev.findIndex(r=>r.id===row.id);
     const next=i>=0?prev.map(r=>r.id===row.id?row:r):[...prev,row];saveW(next,row);return next;});setEditing(null);}
   function remove(w){if(!confirm("Delete "+w.wo+"? This can't be undone."))return;
@@ -633,19 +713,29 @@ function App(){
     setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
   function quickLog(w){addLog(w,"Contact logged");}
   function saveNotes(w,text){const row={...w,history:text};setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
+  function setAction(w,val){const row={...w,action:val};setRows(prev=>{const next=prev.map(r=>r.id===w.id?row:r);saveW(next,row);return next;});}
   function saveSub(sub){setSubs(prev=>{const i=prev.findIndex(s=>s.id===sub.id);
     const next=i>=0?prev.map(s=>s.id===sub.id?sub:s):[...prev,sub];saveS(next,sub);return next;});
-    if(pendingSubTarget){pendingSubTarget.setF(p=>({...p,subId:sub.id}));setPendingSubTarget(null);}
-    setEditSub(null);}
-  function newSubFromWO(f,setF){setPendingSubTarget({setF});setEditSub(false);}
- 
+    if(pendingSubTarget&&pendingSubTarget.onSaved){pendingSubTarget.onSaved(sub);}
+    setPendingSubTarget(null);setEditSub(null);}
+  function newSubFromWO(f,setF){setPendingSubTarget({onSaved:(sub)=>setF(p=>({...p,subId:sub.id}))});setEditSub(false);}
+  function patchById(id,fn){setRows(prev=>{const next=prev.map(r=>r.id===id?{...r,...fn(r)}:r);const row=next.find(r=>r.id===id);saveW(next,row);return next;});}
+  function addBid(w,subId){patchById(w.id,r=>((r.bids||[]).some(b=>b.subId===subId)?{}:{bids:[...(r.bids||[]),{subId,status:"reached out",note:""}]}));}
+  function setBidStatus(w,subId,status){patchById(w.id,r=>({bids:(r.bids||[]).map(b=>b.subId===subId?{...b,status}:b)}));}
+  function setBidNote(w,subId,note){patchById(w.id,r=>({bids:(r.bids||[]).map(b=>b.subId===subId?{...b,note}:b)}));}
+  function dropBid(w,subId){patchById(w.id,r=>{const p={bids:(r.bids||[]).filter(b=>b.subId!==subId)};if(r.subId===subId)p.subId="";return p;});}
+  function chooseBid(w,subId){patchById(w.id,r=>({subId}));}
+  function newBidSub(w){setPendingSubTarget({onSaved:(sub)=>addBid(w,sub.id)});setEditSub(false);}
+
   const cur=view.name==="detail"?rows.find(r=>r.id===view.id):null;
   const curSub=view.name==="subdetail"?subs.find(s=>s.id===view.id):null;
- 
+
   const counts={past_due:0,due_soon:0,follow_up:0};
   rows.forEach(w=>{if(w.status==="Complete")return;const k=statusFlag(w,cfg).key;if(counts[k]!=null)counts[k]++;});
   const rushList=rows.filter(w=>w.rush&&w.status!=="Complete");
- 
+  const actionCounts={};
+  rows.forEach(w=>{if(w.status!=="Complete"&&w.action)actionCounts[w.action]=(actionCounts[w.action]||0)+1;});
+
   function filtered(){
     let v=rows.filter(w=>{
       if(w.status==="Complete")return false;
@@ -653,7 +743,9 @@ function App(){
       if(client&&w.client!==client)return false;
       if(status&&w.status!==status)return false;
       if(pri&&w.pri!==pri)return false;
-      if(flagFilter){if(flagFilter==="rush"){if(!(w.rush))return false;}else if(statusFlag(w,cfg).key!==flagFilter)return false;}
+      if(flagFilter){const FK=["past_due","due_soon","follow_up","rush"];
+        if(FK.includes(flagFilter)){if(flagFilter==="rush"){if(!w.rush)return false;}else if(statusFlag(w,cfg).key!==flagFilter)return false;}
+        else if(w.action!==flagFilter)return false;}
       if(q){const s=q.toLowerCase();const sub=subs.find(x=>x.id===w.subId);
         const hay=[w.wo,w.job,w.client,w.location,w.scope,w.contact,w.sub,sub&&sub.name].join(" ").toLowerCase();
         if(!hay.includes(s))return false;}
@@ -663,7 +755,7 @@ function App(){
       if(sort==="pri")return (a.pri||"P9").localeCompare(b.pri||"P9");return 0;});
     return v;
   }
- 
+
   function exportCSV(){
     const cols=["wo","job","region","client","location","scope","sub","fm","contact","phone","nte","budget","actual","pri","rush","status","due","lastContact","next","history"];
     const esc=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
@@ -672,45 +764,54 @@ function App(){
   }
   function exportJSON(){dl(JSON.stringify({work_orders:rows,subs},null,2),"work_orders_backup.json","application/json");}
   function dl(t,n,ty){const b=new Blob([t],{type:ty}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);}
- 
+
   const isDetail=view.name==="detail"||view.name==="subdetail";
-  const triage=[{key:"past_due",label:"Past due",n:counts.past_due,c:"var(--pastdue)"},
-    {key:"rush",label:"Rush",n:rushList.length,c:"var(--rush)"},
+  const deadlineRow=[{key:"past_due",label:"Past due",n:counts.past_due,c:"var(--pastdue)"},
     {key:"due_soon",label:"Due soon",n:counts.due_soon,c:"var(--duesoon)"},
     {key:"follow_up",label:"Follow up",n:counts.follow_up,c:"var(--followup)"}];
- 
+  const attentionRow=[{key:"rush",label:"Rush",n:rushList.length,c:"var(--rush)"}];
+
   return (
    <>
      <div className="top">
        {isDetail
         ? <button className="back" onClick={back}>{I.back} Back</button>
         : <>
-          <h1><span className="bloom">✿</span> Work Order Board
+          <h1><span className="bloom">♥</span> Work Order Board
             <span className="mode">{sync?<>● <b>Synced</b></>:<>○ <b>Local</b></>}</span></h1>
           <div className="tabs">
             {[["board","Active"],["completed","Completed"],["subs","Subs"]].map(([k,l])=>
               <button key={k} className={"tab"+(view.name===k?" on":"")} onClick={()=>root(k)}>{l}</button>)}
           </div>
-          {view.name==="board"&&
+          {view.name==="board"&&<>
+           <div className="trlabel">Deadlines</div>
            <div className="triage">
              <button className="tcard clear" onClick={()=>setFlag("")} style={flagFilter?{}:{outline:"2px solid rgba(255,255,255,.6)"}}>
                <div className="n">{rows.filter(w=>w.status!=="Complete").length}</div><div className="l">All active</div></button>
-             {triage.map(t=><button key={t.key} className={"tcard"+(flagFilter&&flagFilter!==t.key?" off":"")} style={{background:t.c}} onClick={()=>setFlag(flagFilter===t.key?"":t.key)}>
+             {deadlineRow.map(t=><button key={t.key} className={"tcard"+(flagFilter&&flagFilter!==t.key?" off":"")} style={{background:t.c}} onClick={()=>setFlag(flagFilter===t.key?"":t.key)}>
                <div className="n">{t.n}</div><div className="l">{t.label}</div></button>)}
-           </div>}
+           </div>
+           <div className="trlabel">Attention</div>
+           <div className="triage">
+             {attentionRow.map(t=><button key={t.key} className={"tcard"+(flagFilter&&flagFilter!==t.key?" off":"")} style={{background:t.c}} onClick={()=>setFlag(flagFilter===t.key?"":t.key)}>
+               <div className="n">{t.n}</div><div className="l">{t.label}</div></button>)}
+             {ACTIONS.filter(a=>actionCounts[a]).map(a=><button key={a} className={"tcard"+(flagFilter&&flagFilter!==a?" off":"")} style={{background:"var(--action)"}} onClick={()=>setFlag(flagFilter===a?"":a)}>
+               <div className="n">{actionCounts[a]}</div><div className="l">{actLabel(a)}</div></button>)}
+           </div>
+          </>}
         </>}
      </div>
- 
+
      {view.name==="board"&&<>
        {rushList.length>0&&<div className="rushbox"><div className="inner">
-         <h3>RUSH work orders<span className="cnt">{rushList.length}</span></h3>
+         <h3>★ RUSH work orders<span className="cnt">{rushList.length}</span></h3>
          {rushList.map(w=>{const f=statusFlag(w,cfg);return (
            <div key={w.id} className="rushline" onClick={()=>nav({name:"detail",id:w.id})}>
              <span className="wo">{w.wo}</span>
              <span className="lc">{w.location||w.scope}</span>
              <span className="fl" style={{background:f.color}}>{f.label}</span></div>);})}
        </div></div>}
- 
+
        <div className="controls">
          <div className="search">{I.search}<input placeholder="Search WO, client, site, sub…" value={q} onChange={e=>setQ(e.target.value)}/></div>
          <div className="filters">
@@ -721,12 +822,12 @@ function App(){
            <div className="sel"><select value={status} onChange={e=>setStatus(e.target.value)}><option value="">All statuses</option>{STATUSES.filter(s=>s!=="Complete").map(s=><option key={s}>{s}</option>)}</select></div>
          </div>
        </div>
- 
+
        <div className="list">
-         {filtered().length===0?<div className="empty"><h3>Nothing here</h3><p>No active work orders match these filters. Clear them, or add one with the + button.</p></div>
+         {filtered().length===0?<div className="empty"><div className="emptyheart">♥</div><h3>Nothing here</h3><p>No active work orders match these filters. Clear them, or add one with the + button.</p></div>
           :filtered().map(w=><Card key={w.id} w={w} cfg={cfg} onOpen={x=>nav({name:"detail",id:x.id})} onLog={quickLog}/>)}
        </div>
- 
+
        <div className="foot">
          <button onClick={exportCSV}>Export CSV</button>
          <button onClick={exportJSON}>Export backup</button>
@@ -734,12 +835,12 @@ function App(){
        </div>
        <button className="fab" onClick={()=>setEditing(false)}>{I.plus} New</button>
      </>}
- 
+
      {view.name==="completed"&&<div className="list">
-       {rows.filter(w=>w.status==="Complete").length===0?<div className="empty"><h3>No completed work orders yet</h3><p>When you mark a job complete, it moves here for your records and off the active board.</p></div>
+       {rows.filter(w=>w.status==="Complete").length===0?<div className="empty"><div className="emptyheart">♥</div><h3>No completed work orders yet</h3><p>When you mark a job complete, it moves here for your records and off the active board.</p></div>
         :rows.filter(w=>w.status==="Complete").map(w=><Card key={w.id} w={w} cfg={cfg} onOpen={x=>nav({name:"detail",id:x.id})} onLog={quickLog}/>)}
      </div>}
- 
+
      {view.name==="subs"&&<>
        <div className="list">
          {subs.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>{
@@ -753,16 +854,19 @@ function App(){
        </div>
        <button className="fab" onClick={()=>setEditSub(false)}>{I.plus} New sub</button>
      </>}
- 
+
      {view.name==="detail"&&cur&&<WODetail key={cur.id} w={cur} subs={subs} cfg={cfg}
         onEdit={setEditing} onDelete={remove}
         onComplete={w=>{setStatusOf(w,"Complete");back();}}
         onReopen={w=>setStatusOf(w,"Approved")}
-        onAddLog={addLog} onSaveNotes={saveNotes} openSub={id=>nav({name:"subdetail",id})}/>}
- 
+        onAddLog={addLog} onSaveNotes={saveNotes} onSetAction={setAction}
+        onAddBid={addBid} onSetBidStatus={setBidStatus} onSetBidNote={setBidNote}
+        onChooseBid={chooseBid} onDropBid={dropBid} onNewBidSub={newBidSub}
+        openSub={id=>nav({name:"subdetail",id})}/>}
+
      {view.name==="subdetail"&&curSub&&<SubDetail sub={curSub} rows={rows} cfg={cfg}
         onEdit={setEditSub} openWO={id=>nav({name:"detail",id})}/>}
- 
+
      {editing!==null&&<EditSheet w={editing||null} subs={subs} onSave={upsert} onClose={()=>setEditing(null)} onNewSub={newSubFromWO}/>}
      {editSub!==null&&<SubEditSheet sub={editSub||null} onSave={saveSub} onClose={()=>{setEditSub(null);setPendingSubTarget(null);}}/>}
      {showSync&&<SyncSheet onClose={()=>setShowSync(false)}/>}
@@ -773,4 +877,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
- 
