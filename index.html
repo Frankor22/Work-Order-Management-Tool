@@ -265,8 +265,9 @@ const SEED=[
 ];
 const STATUSES=["New","Needs Sub","Survey Needed","Awaiting Sub Quote","Quote Submitted","Approved","Parts Ordered","Scheduled","In Progress","Complete"];
 const PRIS=["","P1","P2","P3","P4","P5"];
-const ACTIONS=["looking for sub","quote needed","pricing needed","waiting for sub invoice","needs to be dispatched","waiting to be scheduled","second visit needed","materials needed","signature needed"];
+const ACTIONS=["looking for sub","quote needed","pricing needed","waiting for sub invoice","needs to be dispatched","waiting to be scheduled","second visit needed","materials needed","signature needed","follow up","follow up sub after survey","vendor package missing","coordination with store","follow up with subcontractor on quote","dispatched waiting to be completed"];
 const BIDSTATUS=["reached out","quoted","no response","not chosen"];
+const PMS=["","Sarah","Dino","Other"];
 function suggestAction(w){if(w.subId)return "";const bids=w.bids||[];if(bids.length===0)return "looking for sub";if(bids.some(b=>b.status==="quoted"))return "pricing needed";return "quote needed";}
 function actLabel(a){return a?a.charAt(0).toUpperCase()+a.slice(1):a;}
 
@@ -274,7 +275,7 @@ function actLabel(a){return a?a.charAt(0).toUpperCase()+a.slice(1):a;}
 const FLAG={
  past_due:{key:"past_due",label:"PAST DUE",color:"var(--pastdue)"},
  due_soon:{key:"due_soon",label:"DUE SOON",color:"var(--duesoon)"},
- follow_up:{key:"follow_up",label:"FOLLOW UP",color:"var(--followup)"},
+ follow_up:{key:"follow_up",label:"GONE QUIET",color:"var(--followup)"},
  in_motion:{key:"in_motion",label:"IN MOTION",color:"var(--motion)"},
  done:{key:"done",label:"DONE",color:"var(--done)"},
  ok:{key:"ok",label:"ON TRACK",color:"var(--ok)"}
@@ -283,6 +284,7 @@ const DAY=86400000;
 function today(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
 function parseD(s){if(!s)return null;const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
 function db(a,b){return Math.round((a-b)/DAY);}
+function bizDays(a,b){if(!a||!b||b<=a)return 0;let n=0,i=0;const d=new Date(a);while(d<b&&i<500){d.setDate(d.getDate()+1);const wd=d.getDay();if(wd!==0&&wd!==6)n++;i++;}return n;}
 function statusFlag(w,cfg){
   const t=today();
   if(w.status==="Complete")return {...FLAG.done};
@@ -290,8 +292,8 @@ function statusFlag(w,cfg){
   const active=["Scheduled","In Progress","Parts Ordered"].includes(w.status);
   if(due&&due<t&&!active)return {...FLAG.past_due,extra:db(t,due)+"d late"};
   if(due&&due>=t&&db(due,t)<=cfg.dueSoon&&!active)return {...FLAG.due_soon,extra:"in "+db(due,t)+"d"};
-  const waiting=["Quote Submitted","Awaiting Sub Quote","Needs Sub","Survey Needed"].includes(w.status);
-  if(lc&&db(t,lc)>cfg.followUp&&waiting)return {...FLAG.follow_up,extra:db(t,lc)+"d quiet"};
+  const ref=lc||parseD(w.createdAt);
+  if(ref&&!active){const qd=bizDays(ref,t);if(qd>=cfg.followUp)return {...FLAG.follow_up,extra:qd+"d quiet"};}
   if(["Scheduled","In Progress"].includes(w.status))return {...FLAG.in_motion};
   return {...FLAG.ok};
 }
@@ -334,7 +336,7 @@ async function initStore(){
     let {data:sd}=await sb.from("subs").select("*").order("created_at",{ascending:true});
     if(!sd||sd.length===0){sd=SUB_SEED.map(s=>({...s}));await sb.from("subs").insert(sd);}
     if(!wd||wd.length===0){wd=SEED.map(s=>({...s,id:uid()}));await sb.from("work_orders").insert(wd);}
-    wd=wd.map(w=>w.log?w:{...w,log:[]});
+    wd=wd.map(w=>({...w,log:w.log||[],createdAt:w.createdAt||todayStr()}));
     sd=sd.map(x=>x.contacts?x:{...x,contacts:[{name:x.contactName||"",phone:x.phone||"",email:x.email||""}]});
     return {rows:wd,subs:sd};
   }catch(e){console.warn("sync failed → local",e);}}
@@ -342,7 +344,7 @@ async function initStore(){
   let rows=rw?safe(rw):null, subs=rs?safe(rs):null;
   if(!rows){rows=memW||SEED.map(s=>({...s,id:uid()}));}
   if(!subs){subs=memS||SUB_SEED.map(s=>({...s}));}
-  rows=rows.map(w=>w.log?w:{...w,log:[]});
+  rows=rows.map(w=>({...w,log:w.log||[],createdAt:w.createdAt||todayStr()}));
   subs=subs.map(x=>x.contacts?x:{...x,contacts:[{name:x.contactName||"",phone:x.phone||"",email:x.email||""}]});
   persistW(rows);persistS(subs);
   return {rows,subs};
@@ -576,7 +578,7 @@ function SubDetail({sub,rows,cfg,onEdit,openWO}){
 
 /* ---------------- edit sheets ---------------- */
 function EditSheet({w,subs,onSave,onClose,onNewSub}){
-  const blank={id:uid(),wo:"",job:"",region:"",client:"",location:"",scope:"",action:"",bids:[],subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",budget:"",actual:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:"",log:[]};
+  const blank={id:uid(),createdAt:todayStr(),wo:"",job:"",region:"",client:"",pm:"",location:"",scope:"",action:"",bids:[],subId:"",sub:"",fm:"",contact:"",phone:"",nte:"",budget:"",actual:"",pri:"",rush:false,status:"New",due:"",lastContact:"",next:"",history:"",log:[]};
   const [f,setF]=useState(w?{...w}:blank);
   const set=k=>e=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
   const isNew=!w;
@@ -592,9 +594,10 @@ function EditSheet({w,subs,onSave,onClose,onNewSub}){
          <div className="fg"><label>Location</label><input value={f.location} onChange={set("location")}/></div>
          <div className="fg"><label>Scope of work</label><textarea value={f.scope} onChange={set("scope")}/></div>
          <div className="fg"><label>Action needed <span style={{color:"var(--action)",fontWeight:700}}>· shows in the bar</span></label><select value={f.action||""} onChange={set("action")}><option value="">— none —</option>{ACTIONS.map(a=><option key={a} value={a}>{a}</option>)}</select></div>
-         <div className="two">
+         <div className="three">
            <div className="fg"><label>Client</label><input value={f.client} onChange={set("client")} placeholder="CBRE - AT&T"/></div>
            <div className="fg"><label>Region</label><input value={f.region} onChange={set("region")}/></div>
+           <div className="fg"><label>PM / market</label><select value={f.pm||""} onChange={set("pm")}>{PMS.map(p=><option key={p} value={p}>{p||"—"}</option>)}</select></div>
          </div>
          <div className="fg"><label>Chosen sub</label>
            <div className="picker">
@@ -689,12 +692,12 @@ function App(){
   const root=name=>setStack([{name}]);
 
   const [q,setQ]=useState(""),[region,setRegion]=useState(""),[client,setClient]=useState(""),
-        [status,setStatus]=useState(""),[pri,setPri]=useState(""),[flagFilter,setFlag]=useState(""),[sort,setSort]=useState("urgent");
+        [status,setStatus]=useState(""),[pri,setPri]=useState(""),[pm,setPm]=useState(""),[flagFilter,setFlag]=useState(""),[sort,setSort]=useState("urgent");
   const [editing,setEditing]=useState(null);
   const [editSub,setEditSub]=useState(null);
   const [pendingSubTarget,setPendingSubTarget]=useState(null);
   const [showSync,setShowSync]=useState(false);
-  const [cfg]=useState(()=>{const r=lGet(CKEY);return r?safe(r):{followUp:7,dueSoon:10};});
+  const [cfg]=useState(()=>{const r=lGet(CKEY);return r?safe(r):{followUp:1,dueSoon:10};});
 
   useEffect(()=>{initStore().then(d=>{setRows(d.rows);setSubs(d.subs);});},[]);
 
@@ -741,6 +744,7 @@ function App(){
       if(w.status==="Complete")return false;
       if(region&&w.region!==region)return false;
       if(client&&w.client!==client)return false;
+      if(pm&&w.pm!==pm)return false;
       if(status&&w.status!==status)return false;
       if(pri&&w.pri!==pri)return false;
       if(flagFilter){const FK=["past_due","due_soon","follow_up","rush"];
@@ -768,7 +772,7 @@ function App(){
   const isDetail=view.name==="detail"||view.name==="subdetail";
   const deadlineRow=[{key:"past_due",label:"Past due",n:counts.past_due,c:"var(--pastdue)"},
     {key:"due_soon",label:"Due soon",n:counts.due_soon,c:"var(--duesoon)"},
-    {key:"follow_up",label:"Follow up",n:counts.follow_up,c:"var(--followup)"}];
+    {key:"follow_up",label:"Gone quiet",n:counts.follow_up,c:"var(--followup)"}];
   const attentionRow=[{key:"rush",label:"Rush",n:rushList.length,c:"var(--rush)"}];
 
   return (
@@ -818,6 +822,7 @@ function App(){
            <div className="sel"><select value={sort} onChange={e=>setSort(e.target.value)}><option value="urgent">Most urgent</option><option value="due">By due date</option><option value="pri">By priority</option></select></div>
            <div className="sel"><select value={client} onChange={e=>setClient(e.target.value)}><option value="">All clients</option>{clients.map(c=><option key={c}>{c}</option>)}</select></div>
            <div className="sel"><select value={pri} onChange={e=>setPri(e.target.value)}><option value="">All priorities</option>{PRIS.filter(Boolean).map(p=><option key={p}>{p}</option>)}</select></div>
+           <div className="sel"><select value={pm} onChange={e=>setPm(e.target.value)}><option value="">All PMs</option>{PMS.filter(Boolean).map(p=><option key={p}>{p}</option>)}</select></div>
            <div className="sel"><select value={region} onChange={e=>setRegion(e.target.value)}><option value="">All regions</option>{regions.map(r=><option key={r}>{r}</option>)}</select></div>
            <div className="sel"><select value={status} onChange={e=>setStatus(e.target.value)}><option value="">All statuses</option>{STATUSES.filter(s=>s!=="Complete").map(s=><option key={s}>{s}</option>)}</select></div>
          </div>
